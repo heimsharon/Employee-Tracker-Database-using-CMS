@@ -1,22 +1,21 @@
 {
-    "name": "employee-tracker-database-using-cms",
-    "version": "1.0.0",
-    "type": "module",
-    "scripts": {
-        "build": "",
-        "start": "ts-node src/index.ts",
-        "inquirer": "npm i inquirer@8.2.4"
-    },
-    "dependencies": {
-        "dotenv": "^16.4.7",
-        "inquirer": "8.2.4",
-        "pg": "^8.11.3"
-    },
-    "devDependencies": {
-        "@types/inquirer": "^8.2.0",
-        "@types/node": "^16.11.7",
-        "@types/pg": "^8.11.11",
-        "ts-node": "^10.4.0",
-        "typescript": "^4.5.4"
-    }
+  "name": "employee-tracker-database-using-cms",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "tsc",
+    "start": "npm run build && node dist/index.js",
+    "inquirer": "npm i inquirer@8.2.4"
+  },
+  "dependencies": {
+    "chalk": "^5.4.1",
+    "inquirer": "8.2.4",
+    "pg": "^8.11.3"
+  },
+  "devDependencies": {
+    "@types/inquirer": "^8.2.0",
+    "@types/node": "^16.11.7",
+    "@types/pg": "^8.11.11",
+    "ts-node": "^10.4.0",
+    "typescript": "^4.5.4"
+  }
 }
