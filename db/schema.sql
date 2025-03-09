@@ -2,6 +2,7 @@
 
 -- Deletes any existing databases based off name
 DROP DATABASE IF EXISTS employees_db;
+
 -- Creates a new database
 CREATE DATABASE employees_db;
 
