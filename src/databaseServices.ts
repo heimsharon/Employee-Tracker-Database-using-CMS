@@ -101,6 +101,17 @@ export class DatabaseService {
     try {
       await client.query('BEGIN');
 
+      // Set manager_id to NULL for employees managed by employees in the department
+      await client.query(`
+        UPDATE employee
+        SET manager_id = NULL
+        WHERE manager_id IN (
+          SELECT id FROM employee WHERE role_id IN (
+            SELECT id FROM role WHERE department_id = $1
+          )
+        )
+      `, [departmentId]);
+
       // Delete employees associated with roles in the department
       await client.query(`
         DELETE FROM employee
@@ -135,6 +146,15 @@ export class DatabaseService {
     try {
       await client.query('BEGIN');
 
+      // Set manager_id to NULL for employees managed by employees with the role
+      await client.query(`
+        UPDATE employee
+        SET manager_id = NULL
+        WHERE manager_id IN (
+          SELECT id FROM employee WHERE role_id = $1
+        )
+      `, [roleId]);
+
       // Delete employees associated with the role
       await client.query(`
         DELETE FROM employee
@@ -160,6 +180,13 @@ export class DatabaseService {
     const client = await this.pool.connect();
     try {
       await client.query('BEGIN');
+
+      // Set manager_id to NULL for employees managed by the employee
+      await client.query(`
+        UPDATE employee
+        SET manager_id = NULL
+        WHERE manager_id = $1
+      `, [employeeId]);
 
       // Delete the employee
       await client.query(`

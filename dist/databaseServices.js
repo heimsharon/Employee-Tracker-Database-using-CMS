@@ -119,6 +119,16 @@ class DatabaseService {
             const client = yield this.pool.connect();
             try {
                 yield client.query('BEGIN');
+                // Set manager_id to NULL for employees managed by employees in the department
+                yield client.query(`
+        UPDATE employee
+        SET manager_id = NULL
+        WHERE manager_id IN (
+          SELECT id FROM employee WHERE role_id IN (
+            SELECT id FROM role WHERE department_id = $1
+          )
+        )
+      `, [departmentId]);
                 // Delete employees associated with roles in the department
                 yield client.query(`
         DELETE FROM employee
@@ -152,6 +162,14 @@ class DatabaseService {
             const client = yield this.pool.connect();
             try {
                 yield client.query('BEGIN');
+                // Set manager_id to NULL for employees managed by employees with the role
+                yield client.query(`
+        UPDATE employee
+        SET manager_id = NULL
+        WHERE manager_id IN (
+          SELECT id FROM employee WHERE role_id = $1
+        )
+      `, [roleId]);
                 // Delete employees associated with the role
                 yield client.query(`
         DELETE FROM employee
@@ -178,6 +196,12 @@ class DatabaseService {
             const client = yield this.pool.connect();
             try {
                 yield client.query('BEGIN');
+                // Set manager_id to NULL for employees managed by the employee
+                yield client.query(`
+        UPDATE employee
+        SET manager_id = NULL
+        WHERE manager_id = $1
+      `, [employeeId]);
                 // Delete the employee
                 yield client.query(`
         DELETE FROM employee
