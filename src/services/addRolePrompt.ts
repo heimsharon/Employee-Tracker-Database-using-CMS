@@ -7,12 +7,14 @@ export async function promptForRoleDetails(departments: any[]) {
     {
       type: 'input',
       name: 'roleTitle',
-      message: 'Enter the title of the new role:'
+      message: 'Enter the title of the new role:',
+      validate: input => input.trim() !== '' || "Role title cannot be empty"
     },
     {
       type: 'input',
       name: 'salary',
-      message: 'Enter the salary for the new role:'
+      message: 'Enter the salary for the new role:',
+      validate: input => !isNaN(input) && input.trim() !== '' || "Please enter a valid number for salary"
     },
     {
       type: 'list',

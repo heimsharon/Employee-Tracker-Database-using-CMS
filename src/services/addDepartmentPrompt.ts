@@ -5,7 +5,8 @@ export async function promptForDepartmentName() {
     {
       type: 'input',
       name: 'departmentName',
-      message: 'Enter the name of the new department:'
+      message: 'Enter the name of the new department:',
+       validate: input => input.trim() !== '' || "Department name cannot be empty"
     }
   ]);
 
