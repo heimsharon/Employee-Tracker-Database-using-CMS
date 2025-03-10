@@ -67,6 +67,16 @@ function main() {
                         console.log(chalk_1.default.blue('All Employees:'));
                         console.table(employeesWithDetails);
                         break;
+                    case 'View Employees by Department':
+                        const employeesByDepartment = yield dbService.getEmployeesByDepartment();
+                        console.log(chalk_1.default.blue('Employees by Department:'));
+                        console.table(employeesByDepartment);
+                        break;
+                    case 'View Employees by Manager':
+                        const employeesByManager = yield dbService.getEmployeesByManager();
+                        console.log(chalk_1.default.blue('Employees by Manager:'));
+                        console.table(employeesByManager);
+                        break;
                     case 'View All Roles':
                         const roles = yield dbService.getAllRoles();
                         const departmentsForRoles = yield dbService.getAllDepartments();
@@ -81,6 +91,13 @@ function main() {
                         });
                         console.log(chalk_1.default.blue('All Roles:'));
                         console.table(rolesWithDepartments);
+                        break;
+                    case 'View Total Utilized Budget of a Department':
+                        const allDepartmentsForBudget = yield dbService.getAllDepartments();
+                        const departmentIdForBudget = yield (0, deletePrompts_1.promptForDeleteDepartment)(allDepartmentsForBudget);
+                        const totalBudget = yield dbService.getTotalUtilizedBudget(parseInt(departmentIdForBudget));
+                        console.log(chalk_1.default.blue(`Total Utilized Budget for Department ID ${departmentIdForBudget}:`));
+                        console.table(totalBudget);
                         break;
                     case 'Add Department':
                         const departmentName = yield (0, addDepartmentPrompt_1.promptForDepartmentName)();

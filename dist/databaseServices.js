@@ -35,6 +35,55 @@ class DatabaseService {
             return result.rows;
         });
     }
+    getEmployeesByManager() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const query = `
+      SELECT 
+        e.id AS "Employee ID",
+        e.first_name AS "First Name",
+        e.last_name AS "Last Name",
+        m.first_name || ' ' || m.last_name AS "Manager"
+      FROM employee e
+      LEFT JOIN employee m ON e.manager_id = m.id
+      ORDER BY m.id, e.id;
+    `;
+            const result = yield this.pool.query(query);
+            return result.rows;
+        });
+    }
+    getEmployeesByDepartment() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const query = `
+      SELECT 
+        e.id AS "Employee ID",
+        e.first_name AS "First Name",
+        e.last_name AS "Last Name",
+        d.department_name AS "Department"
+      FROM employee e
+      JOIN role r ON e.role_id = r.id
+      JOIN department d ON r.department_id = d.id
+      ORDER BY d.id, e.id;
+    `;
+            const result = yield this.pool.query(query);
+            return result.rows;
+        });
+    }
+    getTotalUtilizedBudget(departmentId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const query = `
+      SELECT 
+        d.department_name AS "Department",
+        SUM(r.salary) AS "Total Utilized Budget"
+      FROM employee e
+      JOIN role r ON e.role_id = r.id
+      JOIN department d ON r.department_id = d.id
+      WHERE d.id = $1
+      GROUP BY d.department_name;
+    `;
+            const result = yield this.pool.query(query, [departmentId]);
+            return result.rows;
+        });
+    }
     addDepartment(name) {
         return __awaiter(this, void 0, void 0, function* () {
             const query = 'INSERT INTO department (department_name) VALUES ($1)';
@@ -67,14 +116,42 @@ class DatabaseService {
     }
     deleteDepartment(departmentId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const query = 'DELETE FROM department WHERE id = $1';
-            yield this.pool.query(query, [departmentId]);
+            const deleteRolesQuery = 'DELETE FROM role WHERE department_id = $1';
+            const deleteDepartmentQuery = 'DELETE FROM department WHERE id = $1';
+            const client = yield this.pool.connect();
+            try {
+                yield client.query('BEGIN');
+                yield client.query(deleteRolesQuery, [departmentId]);
+                yield client.query(deleteDepartmentQuery, [departmentId]);
+                yield client.query('COMMIT');
+            }
+            catch (error) {
+                yield client.query('ROLLBACK');
+                throw error;
+            }
+            finally {
+                client.release();
+            }
         });
     }
     deleteRole(roleId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const query = 'DELETE FROM role WHERE id = $1';
-            yield this.pool.query(query, [roleId]);
+            const deleteEmployeesQuery = 'DELETE FROM employee WHERE role_id = $1';
+            const deleteRoleQuery = 'DELETE FROM role WHERE id = $1';
+            const client = yield this.pool.connect();
+            try {
+                yield client.query('BEGIN');
+                yield client.query(deleteEmployeesQuery, [roleId]);
+                yield client.query(deleteRoleQuery, [roleId]);
+                yield client.query('COMMIT');
+            }
+            catch (error) {
+                yield client.query('ROLLBACK');
+                throw error;
+            }
+            finally {
+                client.release();
+            }
         });
     }
     deleteEmployee(employeeId) {

@@ -1,4 +1,16 @@
 import inquirer from 'inquirer';
+import { DatabaseService } from '../databaseServices';
+import { Pool } from 'pg';
+
+const pool = new Pool({
+  user: 'heimsharon',
+  host: 'localhost',
+  database: 'employees_db',
+  password: 'Thisisstupid11',
+  port: 5432,
+});
+
+const dbService = new DatabaseService(pool);
 
 export async function promptForDeleteDepartment(departments: any[]) {
   const departmentChoices = departments.map(department => ({ name: `${department.department_name} (ID: ${department.id})`, value: department.id }));
@@ -9,10 +21,35 @@ export async function promptForDeleteDepartment(departments: any[]) {
       name: 'departmentId',
       message: 'Select the department to delete:',
       choices: departmentChoices
+    },
+    {
+      type: 'confirm',
+      name: 'confirmDelete',
+      message: 'Deleting this department will also delete all associated roles. Are you sure?',
+      default: false
     }
   ]);
 
-  return answers.departmentId;
+  if (answers.confirmDelete) {
+    const departmentId = answers.departmentId;
+
+    // Call the deleteDepartment function to handle the deletion
+    try {
+      await dbService.deleteDepartment(departmentId);
+      console.log(`Department with ID ${departmentId} has been deleted.`);
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error(`Failed to delete department with ID ${departmentId}:`, error.message);
+      } else {
+        console.error(`Failed to delete department with ID ${departmentId}:`, error);
+      }
+    }
+
+    return departmentId;
+  } else {
+    console.log('Deletion cancelled.');
+    return null;
+  }
 }
 
 export async function promptForDeleteRole(roles: any[]) {
@@ -24,10 +61,35 @@ export async function promptForDeleteRole(roles: any[]) {
       name: 'roleId',
       message: 'Select the role to delete:',
       choices: roleChoices
+    },
+    {
+      type: 'confirm',
+      name: 'confirmDelete',
+      message: 'Deleting this role will also delete all associated employees. Are you sure?',
+      default: false
     }
   ]);
 
-  return answers.roleId;
+  if (answers.confirmDelete) {
+    const roleId = answers.roleId;
+
+    // Call the deleteRole function to handle the deletion
+    try {
+      await dbService.deleteRole(roleId);
+      console.log(`Role with ID ${roleId} has been deleted.`);
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error(`Failed to delete role with ID ${roleId}:`, error.message);
+      } else {
+        console.error(`Failed to delete role with ID ${roleId}:`, error);
+      }
+    }
+
+    return roleId;
+  } else {
+    console.log('Deletion cancelled.');
+    return null;
+  }
 }
 
 export async function promptForDeleteEmployee(employees: any[]) {
@@ -39,8 +101,19 @@ export async function promptForDeleteEmployee(employees: any[]) {
       name: 'employeeId',
       message: 'Select the employee to delete:',
       choices: employeeChoices
+    },
+    {
+      type: 'confirm',
+      name: 'confirmDelete',
+      message: 'Are you sure you want to delete this employee?',
+      default: false
     }
   ]);
 
-  return answers.employeeId;
+  if (answers.confirmDelete) {
+    return answers.employeeId;
+  } else {
+    console.log('Deletion cancelled.');
+    return null;
+  }
 }

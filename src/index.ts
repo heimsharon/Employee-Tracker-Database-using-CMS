@@ -58,6 +58,16 @@ async function main() {
           console.log(chalk.blue('All Employees:'));
           console.table(employeesWithDetails);
           break;
+        case 'View Employees by Department':
+          const employeesByDepartment = await dbService.getEmployeesByDepartment();
+          console.log(chalk.blue('Employees by Department:'));
+          console.table(employeesByDepartment);
+          break;
+        case 'View Employees by Manager':
+          const employeesByManager = await dbService.getEmployeesByManager();
+          console.log(chalk.blue('Employees by Manager:'));
+          console.table(employeesByManager);
+          break;
         case 'View All Roles':
           const roles = await dbService.getAllRoles();
           const departmentsForRoles = await dbService.getAllDepartments();
@@ -72,6 +82,13 @@ async function main() {
           });
           console.log(chalk.blue('All Roles:'));
           console.table(rolesWithDepartments);
+          break;
+        case 'View Total Utilized Budget of a Department':
+          const allDepartmentsForBudget = await dbService.getAllDepartments();
+          const departmentIdForBudget = await promptForDeleteDepartment(allDepartmentsForBudget);
+          const totalBudget = await dbService.getTotalUtilizedBudget(parseInt(departmentIdForBudget));
+          console.log(chalk.blue(`Total Utilized Budget for Department ID ${departmentIdForBudget}:`));
+          console.table(totalBudget);
           break;
         case 'Add Department':
           const departmentName = await promptForDepartmentName();
@@ -118,6 +135,7 @@ async function main() {
             }
           }
           break;
+
         case 'Delete Role':
           const allRoles = await dbService.getAllRoles();
           const deleteRoleId = await promptForDeleteRole(allRoles);
@@ -132,6 +150,7 @@ async function main() {
             }
           }
           break;
+
         case 'Delete Employee':
           const allEmployees = await dbService.getAllEmployees();
           const deleteEmployeeId = await promptForDeleteEmployee(allEmployees);
