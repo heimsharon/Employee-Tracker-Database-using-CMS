@@ -37,7 +37,7 @@ function promptForDeleteDepartment(departments) {
             {
                 type: 'confirm',
                 name: 'confirmDelete',
-                message: 'Deleting this department will also delete all associated roles. Are you sure?',
+                message: 'Deleting this department will also delete all roles associated with it. Are you sure?',
                 default: false
             }
         ]);

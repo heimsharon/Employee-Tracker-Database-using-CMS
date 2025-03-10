@@ -22,7 +22,7 @@ function promptForUpdateEmployeeRole(employees, roles) {
             {
                 type: 'list',
                 name: 'employeeId',
-                message: 'Select the employee to update:',
+                message: 'Select an employee to update:',
                 choices: employeeChoices
             },
             {
@@ -44,13 +44,13 @@ function promptForUpdateEmployeeManager(employees) {
             {
                 type: 'list',
                 name: 'employeeId',
-                message: 'Select the employee to update:',
+                message: 'Select an employee to update:',
                 choices: employeeChoices
             },
             {
                 type: 'list',
                 name: 'managerId',
-                message: 'Select the new manager for the employee:',
+                message: 'Select a new manager for the employee:',
                 choices: managerChoices
             }
         ]);

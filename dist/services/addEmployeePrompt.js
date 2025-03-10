@@ -23,24 +23,24 @@ function promptForEmployeeDetails(roles, employees) {
                 type: 'input',
                 name: 'firstName',
                 message: 'Enter the first name of the new employee:',
-                validate: input => input.trim() !== '' || "First name cannot be empty"
+                validate: input => input.trim() !== '' || "First name cannot be empty."
             },
             {
                 type: 'input',
                 name: 'lastName',
                 message: 'Enter the last name of the new employee:',
-                validate: input => input.trim() !== '' || "Last name cannot be empty"
+                validate: input => input.trim() !== '' || "Last name cannot be empty."
             },
             {
                 type: 'list',
                 name: 'roleId',
-                message: 'Select the role for the new employee:',
+                message: 'Select a role for the new employee:',
                 choices: roleChoices
             },
             {
                 type: 'list',
                 name: 'managerId',
-                message: 'Select the manager for the new employee (or leave blank if none):',
+                message: 'Select a manager for the new employee (or leave blank if none):',
                 choices: [{ name: 'None', value: null }, ...employeeChoices]
             }
         ]);
