@@ -160,5 +160,18 @@ class DatabaseService {
             yield this.pool.query(query, [employeeId]);
         });
     }
+    getRolesByDepartment(departmentId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const query = 'SELECT * FROM role WHERE department_id = $1';
+            const result = yield this.pool.query(query, [departmentId]);
+            return result.rows;
+        });
+    }
+    deleteEmployeesByRole(roleId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const query = 'DELETE FROM employee WHERE role_id = $1';
+            yield this.pool.query(query, [roleId]);
+        });
+    }
 }
 exports.DatabaseService = DatabaseService;

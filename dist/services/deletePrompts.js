@@ -43,8 +43,18 @@ function promptForDeleteDepartment(departments) {
         ]);
         if (answers.confirmDelete) {
             const departmentId = answers.departmentId;
-            // Call the deleteDepartment function to handle the deletion
             try {
+                // Get all roles associated with the department
+                const roles = yield dbService.getRolesByDepartment(departmentId);
+                // Delete all employees associated with each role
+                for (const role of roles) {
+                    yield dbService.deleteEmployeesByRole(role.id);
+                }
+                // Delete all roles associated with the department
+                for (const role of roles) {
+                    yield dbService.deleteRole(role.id);
+                }
+                // Delete the department
                 yield dbService.deleteDepartment(departmentId);
                 console.log(`Department with ID ${departmentId} has been deleted.`);
             }

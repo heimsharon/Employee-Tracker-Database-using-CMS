@@ -136,4 +136,15 @@ export class DatabaseService {
     const query = 'DELETE FROM employee WHERE id = $1';
     await this.pool.query(query, [employeeId]);
   }
+
+  async getRolesByDepartment(departmentId: number) {
+    const query = 'SELECT * FROM role WHERE department_id = $1';
+    const result = await this.pool.query(query, [departmentId]);
+    return result.rows;
+  }
+
+  async deleteEmployeesByRole(roleId: number) {
+    const query = 'DELETE FROM employee WHERE role_id = $1';
+    await this.pool.query(query, [roleId]);
+  }
 }

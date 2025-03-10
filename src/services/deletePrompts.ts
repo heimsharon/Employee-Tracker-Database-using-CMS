@@ -33,8 +33,21 @@ export async function promptForDeleteDepartment(departments: any[]) {
   if (answers.confirmDelete) {
     const departmentId = answers.departmentId;
 
-    // Call the deleteDepartment function to handle the deletion
     try {
+      // Get all roles associated with the department
+      const roles = await dbService.getRolesByDepartment(departmentId);
+
+      // Delete all employees associated with each role
+      for (const role of roles) {
+        await dbService.deleteEmployeesByRole(role.id);
+      }
+
+      // Delete all roles associated with the department
+      for (const role of roles) {
+        await dbService.deleteRole(role.id);
+      }
+
+      // Delete the department
       await dbService.deleteDepartment(departmentId);
       console.log(`Department with ID ${departmentId} has been deleted.`);
     } catch (error) {
