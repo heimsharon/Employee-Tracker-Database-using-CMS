@@ -25,13 +25,13 @@ export class DatabaseService {
     return result.rows;
   }
 
-  async addDepartment(name: string) {
-    const query = 'INSERT INTO department (name) VALUES ($1)';
-    await this.pool.query(query, [name]);
+  async addDepartment(departmentName: string) {
+    const query = 'INSERT INTO department (department_name) VALUES ($1)';
+    await this.pool.query(query, [departmentName]);
   }
 
   async addRole(title: string, salary: number, departmentId: number) {
-    const query = 'INSERT INTO role (title, salary, department_id) VALUES ($1, $2, $3)';
+    const query = 'INSERT INTO role (role_title, salary, department_id) VALUES ($1, $2, $3)';
     await this.pool.query(query, [title, salary, departmentId]);
   }
 

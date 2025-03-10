@@ -35,15 +35,15 @@ class DatabaseService {
             return result.rows;
         });
     }
-    addDepartment(name) {
+    addDepartment(departmentName) {
         return __awaiter(this, void 0, void 0, function* () {
-            const query = 'INSERT INTO department (name) VALUES ($1)';
-            yield this.pool.query(query, [name]);
+            const query = 'INSERT INTO department (department_name) VALUES ($1)';
+            yield this.pool.query(query, [departmentName]);
         });
     }
     addRole(title, salary, departmentId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const query = 'INSERT INTO role (title, salary, department_id) VALUES ($1, $2, $3)';
+            const query = 'INSERT INTO role (role_title, salary, department_id) VALUES ($1, $2, $3)';
             yield this.pool.query(query, [title, salary, departmentId]);
         });
     }
@@ -81,45 +81,6 @@ class DatabaseService {
         return __awaiter(this, void 0, void 0, function* () {
             const query = 'DELETE FROM employee WHERE id = $1';
             yield this.pool.query(query, [employeeId]);
-        });
-    }
-    getEmployeesByManager(managerId) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const query = `
-      SELECT e.id, e.first_name, e.last_name, r.title, d.name AS department, r.salary
-      FROM employee e
-      JOIN role r ON e.role_id = r.id
-      JOIN department d ON r.department_id = d.id
-      WHERE e.manager_id = $1
-    `;
-            const result = yield this.pool.query(query, [managerId]);
-            return result.rows;
-        });
-    }
-    getEmployeesByDepartment(departmentId) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const query = `
-      SELECT e.id, e.first_name, e.last_name, r.title, r.salary, m.first_name AS manager_first_name, m.last_name AS manager_last_name
-      FROM employee e
-      JOIN role r ON e.role_id = r.id
-      JOIN department d ON r.department_id = d.id
-      LEFT JOIN employee m ON e.manager_id = m.id
-      WHERE d.id = $1
-    `;
-            const result = yield this.pool.query(query, [departmentId]);
-            return result.rows;
-        });
-    }
-    getTotalUtilizedBudget(departmentId) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const query = `
-      SELECT SUM(r.salary) AS total_budget
-      FROM employee e
-      JOIN role r ON e.role_id = r.id
-      WHERE r.department_id = $1
-    `;
-            const result = yield this.pool.query(query, [departmentId]);
-            return result.rows[0].total_budget;
         });
     }
 }

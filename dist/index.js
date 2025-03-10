@@ -21,7 +21,6 @@ const addEmployeePrompt_1 = require("./services/addEmployeePrompt");
 const updateEmployeePrompt_1 = require("./services/updateEmployeePrompt");
 const deletePrompts_1 = require("./services/deletePrompts");
 const chalk_1 = __importDefault(require("chalk"));
-const inquirer_1 = __importDefault(require("inquirer"));
 const dbConfig = {
     user: 'heimsharon',
     host: 'localhost',
@@ -120,21 +119,6 @@ function main() {
                         yield dbService.deleteEmployee(parseInt(deleteEmployeeId));
                         console.log(chalk_1.default.green('Deleted employee'));
                         break;
-                    case 'View Employees by Manager':
-                        const managerId = yield promptForManagerId();
-                        const employeesByManager = yield dbService.getEmployeesByManager(managerId);
-                        console.log(chalk_1.default.blue('Employees by Manager:'), employeesByManager);
-                        break;
-                    case 'View Employees by Department':
-                        const departmentId = yield promptForDepartmentId();
-                        const employeesByDepartment = yield dbService.getEmployeesByDepartment(departmentId);
-                        console.log(chalk_1.default.blue('Employees by Department:'), employeesByDepartment);
-                        break;
-                    case 'View Total Utilized Budget of a Department':
-                        const deptId = yield promptForDepartmentId();
-                        const totalBudget = yield dbService.getTotalUtilizedBudget(deptId);
-                        console.log(chalk_1.default.blue(`Total Utilized Budget: $${totalBudget}`));
-                        break;
                     case 'Exit':
                         exit = true;
                         break;
@@ -152,30 +136,6 @@ function main() {
         finally {
             yield pool.end();
         }
-    });
-}
-function promptForManagerId() {
-    return __awaiter(this, void 0, void 0, function* () {
-        const answers = yield inquirer_1.default.prompt([
-            {
-                type: 'input',
-                name: 'managerId',
-                message: 'Enter the manager ID:'
-            }
-        ]);
-        return parseInt(answers.managerId);
-    });
-}
-function promptForDepartmentId() {
-    return __awaiter(this, void 0, void 0, function* () {
-        const answers = yield inquirer_1.default.prompt([
-            {
-                type: 'input',
-                name: 'departmentId',
-                message: 'Enter the department ID:'
-            }
-        ]);
-        return parseInt(answers.departmentId);
     });
 }
 main();

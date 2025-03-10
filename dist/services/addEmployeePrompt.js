@@ -16,22 +16,30 @@ exports.promptForEmployeeDetails = void 0;
 const inquirer_1 = __importDefault(require("inquirer"));
 function promptForEmployeeDetails(roles, employees) {
     return __awaiter(this, void 0, void 0, function* () {
-        const roleChoices = roles.map(role => ({ name: `${role.role_title} (ID: ${role.role_id})`, value: role.role_id }));
-        const employeeChoices = employees.map(employee => ({ name: `${employee.first_name} ${employee.last_name} (ID: ${employee.id})`, value: employee.id }));
+        const roleChoices = roles.map(role => ({
+            name: `${role.role_title} (ID: ${role.role_id}, Dept: ${role.department_id})`,
+            value: { roleId: role.role_id, departmentId: role.department_id }
+        }));
+        const employeeChoices = employees.map(employee => ({
+            name: `${employee.first_name} ${employee.last_name} (ID: ${employee.id})`,
+            value: employee.id
+        }));
         const answers = yield inquirer_1.default.prompt([
             {
                 type: 'input',
                 name: 'firstName',
-                message: 'Enter the first name of the new employee:'
+                message: 'Enter the first name of the new employee:',
+                validate: input => input.trim() !== '' || "First name cannot be empty"
             },
             {
                 type: 'input',
                 name: 'lastName',
-                message: 'Enter the last name of the new employee:'
+                message: 'Enter the last name of the new employee:',
+                validate: input => input.trim() !== '' || "Last name cannot be empty"
             },
             {
                 type: 'list',
-                name: 'roleId',
+                name: 'role',
                 message: 'Select the role for the new employee:',
                 choices: roleChoices
             },
@@ -42,7 +50,7 @@ function promptForEmployeeDetails(roles, employees) {
                 choices: [{ name: 'None', value: null }, ...employeeChoices]
             }
         ]);
-        return answers;
+        return Object.assign(Object.assign({}, answers), { roleId: answers.role.roleId, departmentId: answers.role.departmentId });
     });
 }
 exports.promptForEmployeeDetails = promptForEmployeeDetails;

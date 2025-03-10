@@ -33,30 +33,25 @@ async function main() {
           const departments = await dbService.getAllDepartments();
           console.log(chalk.blue('All Departments:'), departments);
           break;
-
         case 'View All Employees':
           const employees = await dbService.getAllEmployees();
           console.log(chalk.blue('All Employees:'), employees);
           break;
-
         case 'View All Roles':
           const roles = await dbService.getAllRoles();
           console.log(chalk.blue('All Roles:'), roles);
           break;
-
         case 'Add Department':
           const departmentName = await promptForDepartmentName();
           await dbService.addDepartment(departmentName);
           console.log(chalk.green('Added new department'));
           break;
-
         case 'Add Role':
           const existingDepartments = await dbService.getAllDepartments();
           const roleDetails = await promptForRoleDetails(existingDepartments);
           await dbService.addRole(roleDetails.roleTitle, parseFloat(roleDetails.salary), parseInt(roleDetails.departmentId));
           console.log(chalk.green('Added new role'));
           break;
-
         case 'Add Employee':
           const existingRoles = await dbService.getAllRoles();
           const existingEmployees = await dbService.getAllEmployees();
@@ -64,7 +59,6 @@ async function main() {
           await dbService.addEmployee(employeeDetails.firstName, employeeDetails.lastName, parseInt(employeeDetails.roleId), employeeDetails.managerId ? parseInt(employeeDetails.managerId) : null);
           console.log(chalk.green('Added new employee'));
           break;
-
         case 'Update Employee Role':
           const allEmployeesForRoleUpdate = await dbService.getAllEmployees();
           const allRolesForRoleUpdate = await dbService.getAllRoles();
@@ -72,14 +66,12 @@ async function main() {
           await dbService.updateEmployeeRole(parseInt(updateRoleDetails.employeeId), parseInt(updateRoleDetails.roleId));
           console.log(chalk.green('Updated employee role'));
           break;
-
         case 'Update Employee Manager':
           const allEmployeesForManagerUpdate = await dbService.getAllEmployees();
           const updateManagerDetails = await promptForUpdateEmployeeManager(allEmployeesForManagerUpdate);
           await dbService.updateEmployeeManager(parseInt(updateManagerDetails.employeeId), updateManagerDetails.managerId !== null ? parseInt(updateManagerDetails.managerId) : null);
           console.log(chalk.green('Updated employee manager'));
           break;
-
         case 'Delete Department':
           const allDepartments = await dbService.getAllDepartments();
           const deleteDepartmentId = await promptForDeleteDepartment(allDepartments);
@@ -89,13 +81,11 @@ async function main() {
           } catch (error) {
             if (error instanceof Error) {
               console.error(chalk.red(error.message));
-            } 
-            else {
+            } else {
               console.error(chalk.red('Unknown error'), error);
             }
           }
           break;
-
         case 'Delete Role':
           const allRoles = await dbService.getAllRoles();
           const deleteRoleId = await promptForDeleteRole(allRoles);
@@ -105,13 +95,11 @@ async function main() {
           } catch (error) {
             if (error instanceof Error) {
               console.error(chalk.red(error.message));
-            } 
-            else {
+            } else {
               console.error(chalk.red('Unknown error'), error);
             }
           }
           break;
-
         case 'Delete Employee':
           const allEmployees = await dbService.getAllEmployees();
           const deleteEmployeeId = await promptForDeleteEmployee(allEmployees);
@@ -126,12 +114,10 @@ async function main() {
   } catch (error) {
     if (error instanceof Error) {
       console.error(chalk.red('Error:'), chalk.red(error.message));
-    }
-     else {
+    } else {
       console.error(chalk.red('Unknown error:'), error);
     }
-  } 
-  finally {
+  } finally {
     await pool.end();
   }
 }
