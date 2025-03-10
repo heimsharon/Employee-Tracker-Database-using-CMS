@@ -116,13 +116,26 @@ class DatabaseService {
     }
     deleteDepartment(departmentId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const deleteRolesQuery = 'DELETE FROM role WHERE department_id = $1';
-            const deleteDepartmentQuery = 'DELETE FROM department WHERE id = $1';
             const client = yield this.pool.connect();
             try {
                 yield client.query('BEGIN');
-                yield client.query(deleteRolesQuery, [departmentId]);
-                yield client.query(deleteDepartmentQuery, [departmentId]);
+                // Delete employees associated with roles in the department
+                yield client.query(`
+        DELETE FROM employee
+        WHERE role_id IN (
+          SELECT id FROM role WHERE department_id = $1
+        )
+      `, [departmentId]);
+                // Delete roles associated with the department
+                yield client.query(`
+        DELETE FROM role
+        WHERE department_id = $1
+      `, [departmentId]);
+                // Delete the department
+                yield client.query(`
+        DELETE FROM department
+        WHERE id = $1
+      `, [departmentId]);
                 yield client.query('COMMIT');
             }
             catch (error) {
@@ -136,13 +149,19 @@ class DatabaseService {
     }
     deleteRole(roleId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const deleteEmployeesQuery = 'DELETE FROM employee WHERE role_id = $1';
-            const deleteRoleQuery = 'DELETE FROM role WHERE id = $1';
             const client = yield this.pool.connect();
             try {
                 yield client.query('BEGIN');
-                yield client.query(deleteEmployeesQuery, [roleId]);
-                yield client.query(deleteRoleQuery, [roleId]);
+                // Delete employees associated with the role
+                yield client.query(`
+        DELETE FROM employee
+        WHERE role_id = $1
+      `, [roleId]);
+                // Delete the role
+                yield client.query(`
+        DELETE FROM role
+        WHERE id = $1
+      `, [roleId]);
                 yield client.query('COMMIT');
             }
             catch (error) {
@@ -156,8 +175,23 @@ class DatabaseService {
     }
     deleteEmployee(employeeId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const query = 'DELETE FROM employee WHERE id = $1';
-            yield this.pool.query(query, [employeeId]);
+            const client = yield this.pool.connect();
+            try {
+                yield client.query('BEGIN');
+                // Delete the employee
+                yield client.query(`
+        DELETE FROM employee
+        WHERE id = $1
+      `, [employeeId]);
+                yield client.query('COMMIT');
+            }
+            catch (error) {
+                yield client.query('ROLLBACK');
+                throw error;
+            }
+            finally {
+                client.release();
+            }
         });
     }
     getRolesByDepartment(departmentId) {

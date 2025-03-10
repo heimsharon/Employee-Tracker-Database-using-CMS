@@ -9,6 +9,7 @@ import { promptForUpdateEmployeeRole, promptForUpdateEmployeeManager } from './s
 import { promptForDeleteDepartment, promptForDeleteRole, promptForDeleteEmployee } from './services/deletePrompts';
 import chalk from 'chalk';
 import inquirer from 'inquirer';
+import Table from 'cli-table3';
 
 config(); // Load environment variables from .env file
 
@@ -20,9 +21,6 @@ const dbConfig = {
   port: parseInt(process.env.DB_PORT || '5432', 10),
 };
 
-// Log the database configuration to verify the environment variables
-console.log('Database Config:', dbConfig);
-
 // Custom function to display table without index column using cli-table3
 function displayTableWithoutIndex(data: any[]) {
   if (data.length === 0) {
@@ -31,10 +29,16 @@ function displayTableWithoutIndex(data: any[]) {
   }
 
   const headers = Object.keys(data[0]);
-  const rows = data.map(row => headers.map(header => row[header]));
+  const table = new Table({
+    head: headers,
+    colWidths: headers.map(() => 20),
+  });
 
-  console.log(headers.join('\t'));
-  rows.forEach(row => console.log(row.join('\t')));
+  data.forEach(row => {
+    table.push(headers.map(header => row[header]));
+  });
+
+  console.log(table.toString());
 }
 
 async function main() {
@@ -81,12 +85,12 @@ async function main() {
         case 'View Employees by Department':
           const employeesByDepartment = await dbService.getEmployeesByDepartment();
           console.log(chalk.blue('Employees by Department:'));
-          console.table(employeesByDepartment);
+          displayTableWithoutIndex(employeesByDepartment);
           break;
         case 'View Employees by Manager':
           const employeesByManager = await dbService.getEmployeesByManager();
           console.log(chalk.blue('Employees by Manager:'));
-          console.table(employeesByManager);
+          displayTableWithoutIndex(employeesByManager);
           break;
         case 'View All Roles':
           const roles = await dbService.getAllRoles();
@@ -101,7 +105,7 @@ async function main() {
             };
           });
           console.log(chalk.blue('All Roles:'));
-          console.table(rolesWithDepartments);
+          displayTableWithoutIndex(rolesWithDepartments);
           break;
         case 'View Total Utilized Budget of a Department':
           const allDepartmentsForBudget = await dbService.getAllDepartments();
@@ -160,7 +164,7 @@ async function main() {
             console.log(chalk.green('Deleted department'));
           } catch (error) {
             if (error instanceof Error) {
-              console.error(chalk.red(error.message));
+              console.error(chalk.red(`Failed to delete department with ID ${deleteDepartmentId}: ${error.message}`));
             } else {
               console.error(chalk.red('Unknown error'), error);
             }
@@ -175,7 +179,7 @@ async function main() {
             console.log(chalk.green('Deleted role'));
           } catch (error) {
             if (error instanceof Error) {
-              console.error(chalk.red(error.message));
+              console.error(chalk.red(`Failed to delete role with ID ${deleteRoleId}: ${error.message}`));
             } else {
               console.error(chalk.red('Unknown error'), error);
             }
@@ -185,8 +189,16 @@ async function main() {
         case 'Delete Employee':
           const allEmployees = await dbService.getAllEmployees();
           const deleteEmployeeId = await promptForDeleteEmployee(allEmployees);
-          await dbService.deleteEmployee(parseInt(deleteEmployeeId));
-          console.log(chalk.green('Deleted employee'));
+          try {
+            await dbService.deleteEmployee(parseInt(deleteEmployeeId));
+            console.log(chalk.green('Deleted employee'));
+          } catch (error) {
+            if (error instanceof Error) {
+              console.error(chalk.red(`Failed to delete employee with ID ${deleteEmployeeId}: ${error.message}`));
+            } else {
+              console.error(chalk.red('Unknown error'), error);
+            }
+          }
           break;
         case 'Exit':
           exit = true;

@@ -96,15 +96,31 @@ export class DatabaseService {
     await this.pool.query(query, [managerId, employeeId]);
   }
 
-  async deleteDepartment(departmentId: number) {
-    const deleteRolesQuery = 'DELETE FROM role WHERE department_id = $1';
-    const deleteDepartmentQuery = 'DELETE FROM department WHERE id = $1';
-
+  async deleteDepartment(departmentId: number): Promise<void> {
     const client = await this.pool.connect();
     try {
       await client.query('BEGIN');
-      await client.query(deleteRolesQuery, [departmentId]);
-      await client.query(deleteDepartmentQuery, [departmentId]);
+
+      // Delete employees associated with roles in the department
+      await client.query(`
+        DELETE FROM employee
+        WHERE role_id IN (
+          SELECT id FROM role WHERE department_id = $1
+        )
+      `, [departmentId]);
+
+      // Delete roles associated with the department
+      await client.query(`
+        DELETE FROM role
+        WHERE department_id = $1
+      `, [departmentId]);
+
+      // Delete the department
+      await client.query(`
+        DELETE FROM department
+        WHERE id = $1
+      `, [departmentId]);
+
       await client.query('COMMIT');
     } catch (error) {
       await client.query('ROLLBACK');
@@ -114,15 +130,23 @@ export class DatabaseService {
     }
   }
 
-  async deleteRole(roleId: number) {
-    const deleteEmployeesQuery = 'DELETE FROM employee WHERE role_id = $1';
-    const deleteRoleQuery = 'DELETE FROM role WHERE id = $1';
-
+  async deleteRole(roleId: number): Promise<void> {
     const client = await this.pool.connect();
     try {
       await client.query('BEGIN');
-      await client.query(deleteEmployeesQuery, [roleId]);
-      await client.query(deleteRoleQuery, [roleId]);
+
+      // Delete employees associated with the role
+      await client.query(`
+        DELETE FROM employee
+        WHERE role_id = $1
+      `, [roleId]);
+
+      // Delete the role
+      await client.query(`
+        DELETE FROM role
+        WHERE id = $1
+      `, [roleId]);
+
       await client.query('COMMIT');
     } catch (error) {
       await client.query('ROLLBACK');
@@ -132,9 +156,24 @@ export class DatabaseService {
     }
   }
 
-  async deleteEmployee(employeeId: number) {
-    const query = 'DELETE FROM employee WHERE id = $1';
-    await this.pool.query(query, [employeeId]);
+  async deleteEmployee(employeeId: number): Promise<void> {
+    const client = await this.pool.connect();
+    try {
+      await client.query('BEGIN');
+
+      // Delete the employee
+      await client.query(`
+        DELETE FROM employee
+        WHERE id = $1
+      `, [employeeId]);
+
+      await client.query('COMMIT');
+    } catch (error) {
+      await client.query('ROLLBACK');
+      throw error;
+    } finally {
+      client.release();
+    }
   }
 
   async getRolesByDepartment(departmentId: number) {

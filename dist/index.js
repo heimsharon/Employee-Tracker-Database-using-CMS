@@ -23,6 +23,7 @@ const updateEmployeePrompt_1 = require("./services/updateEmployeePrompt");
 const deletePrompts_1 = require("./services/deletePrompts");
 const chalk_1 = __importDefault(require("chalk"));
 const inquirer_1 = __importDefault(require("inquirer"));
+const cli_table3_1 = __importDefault(require("cli-table3"));
 (0, dotenv_1.config)(); // Load environment variables from .env file
 const dbConfig = {
     user: process.env.DB_USER,
@@ -31,8 +32,6 @@ const dbConfig = {
     password: process.env.DB_PASSWORD,
     port: parseInt(process.env.DB_PORT || '5432', 10),
 };
-// Log the database configuration to verify the environment variables
-console.log('Database Config:', dbConfig);
 // Custom function to display table without index column using cli-table3
 function displayTableWithoutIndex(data) {
     if (data.length === 0) {
@@ -40,9 +39,14 @@ function displayTableWithoutIndex(data) {
         return;
     }
     const headers = Object.keys(data[0]);
-    const rows = data.map(row => headers.map(header => row[header]));
-    console.log(headers.join('\t'));
-    rows.forEach(row => console.log(row.join('\t')));
+    const table = new cli_table3_1.default({
+        head: headers,
+        colWidths: headers.map(() => 20),
+    });
+    data.forEach(row => {
+        table.push(headers.map(header => row[header]));
+    });
+    console.log(table.toString());
 }
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
@@ -86,12 +90,12 @@ function main() {
                     case 'View Employees by Department':
                         const employeesByDepartment = yield dbService.getEmployeesByDepartment();
                         console.log(chalk_1.default.blue('Employees by Department:'));
-                        console.table(employeesByDepartment);
+                        displayTableWithoutIndex(employeesByDepartment);
                         break;
                     case 'View Employees by Manager':
                         const employeesByManager = yield dbService.getEmployeesByManager();
                         console.log(chalk_1.default.blue('Employees by Manager:'));
-                        console.table(employeesByManager);
+                        displayTableWithoutIndex(employeesByManager);
                         break;
                     case 'View All Roles':
                         const roles = yield dbService.getAllRoles();
@@ -106,7 +110,7 @@ function main() {
                             };
                         });
                         console.log(chalk_1.default.blue('All Roles:'));
-                        console.table(rolesWithDepartments);
+                        displayTableWithoutIndex(rolesWithDepartments);
                         break;
                     case 'View Total Utilized Budget of a Department':
                         const allDepartmentsForBudget = yield dbService.getAllDepartments();
@@ -166,7 +170,7 @@ function main() {
                         }
                         catch (error) {
                             if (error instanceof Error) {
-                                console.error(chalk_1.default.red(error.message));
+                                console.error(chalk_1.default.red(`Failed to delete department with ID ${deleteDepartmentId}: ${error.message}`));
                             }
                             else {
                                 console.error(chalk_1.default.red('Unknown error'), error);
@@ -182,7 +186,7 @@ function main() {
                         }
                         catch (error) {
                             if (error instanceof Error) {
-                                console.error(chalk_1.default.red(error.message));
+                                console.error(chalk_1.default.red(`Failed to delete role with ID ${deleteRoleId}: ${error.message}`));
                             }
                             else {
                                 console.error(chalk_1.default.red('Unknown error'), error);
@@ -192,8 +196,18 @@ function main() {
                     case 'Delete Employee':
                         const allEmployees = yield dbService.getAllEmployees();
                         const deleteEmployeeId = yield (0, deletePrompts_1.promptForDeleteEmployee)(allEmployees);
-                        yield dbService.deleteEmployee(parseInt(deleteEmployeeId));
-                        console.log(chalk_1.default.green('Deleted employee'));
+                        try {
+                            yield dbService.deleteEmployee(parseInt(deleteEmployeeId));
+                            console.log(chalk_1.default.green('Deleted employee'));
+                        }
+                        catch (error) {
+                            if (error instanceof Error) {
+                                console.error(chalk_1.default.red(`Failed to delete employee with ID ${deleteEmployeeId}: ${error.message}`));
+                            }
+                            else {
+                                console.error(chalk_1.default.red('Unknown error'), error);
+                            }
+                        }
                         break;
                     case 'Exit':
                         exit = true;
