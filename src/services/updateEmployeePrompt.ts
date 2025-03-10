@@ -8,7 +8,7 @@ export async function promptForUpdateEmployeeRole(employees: any[], roles: any[]
     {
       type: 'list',
       name: 'employeeId',
-      message: 'Select the employee to update:',
+      message: 'Select an employee to update:',
       choices: employeeChoices
     },
     {
@@ -30,13 +30,13 @@ export async function promptForUpdateEmployeeManager(employees: any[]) {
     {
       type: 'list',
       name: 'employeeId',
-      message: 'Select the employee to update:',
+      message: 'Select an employee to update:',
       choices: employeeChoices
     },
     {
       type: 'list',
       name: 'managerId',
-      message: 'Select the new manager for the employee:',
+      message: 'Select a new manager for the employee:',
       choices: managerChoices
     }
   ]);

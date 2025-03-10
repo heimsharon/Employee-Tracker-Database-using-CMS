@@ -18,7 +18,7 @@ export async function mainMenu() {
         'Delete Department',
         'Delete Role',
         'Delete Employee',
-        'View Total Utilized Budget of a Department', // New option added here
+        'View Total Utilized Budget of a Department',
         'Exit'
       ]
     }
