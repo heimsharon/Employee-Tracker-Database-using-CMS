@@ -94,7 +94,6 @@ function promptForDeleteRole(roles) {
         ]);
         if (answers.confirmDelete) {
             const roleId = answers.roleId;
-            // Call the deleteRole function to handle the deletion
             try {
                 yield dbService.deleteRole(roleId);
                 console.log(`Role with ID ${roleId} has been deleted.`);
@@ -134,7 +133,20 @@ function promptForDeleteEmployee(employees) {
             }
         ]);
         if (answers.confirmDelete) {
-            return answers.employeeId;
+            const employeeId = answers.employeeId;
+            try {
+                yield dbService.deleteEmployee(employeeId);
+                console.log(`Employee with ID ${employeeId} has been deleted.`);
+            }
+            catch (error) {
+                if (error instanceof Error) {
+                    console.error(`Failed to delete employee with ID ${employeeId}:`, error.message);
+                }
+                else {
+                    console.error(`Failed to delete employee with ID ${employeeId}:`, error);
+                }
+            }
+            return employeeId;
         }
         else {
             console.log('Deletion cancelled.');
