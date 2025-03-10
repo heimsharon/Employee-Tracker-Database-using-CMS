@@ -1,4 +1,5 @@
 import { Pool } from 'pg';
+import { config } from 'dotenv';
 import { DatabaseService } from './databaseServices';
 import { mainMenu } from './services/prompts';
 import { promptForDepartmentName } from './services/addDepartmentPrompt';
@@ -9,13 +10,18 @@ import { promptForDeleteDepartment, promptForDeleteRole, promptForDeleteEmployee
 import chalk from 'chalk';
 import inquirer from 'inquirer';
 
+config(); // Load environment variables from .env file
+
 const dbConfig = {
-  user: 'heimsharon',
-  host: 'localhost',
-  database: 'employees_db',
-  password: 'Thisisstupid11',
-  port: 5432,
+  user: process.env.DB_USER as string,
+  host: process.env.DB_HOST as string,
+  database: process.env.DB_DATABASE as string,
+  password: process.env.DB_PASSWORD as string,
+  port: parseInt(process.env.DB_PORT || '5432', 10),
 };
+
+// Log the database configuration to verify the environment variables
+console.log('Database Config:', dbConfig);
 
 // Custom function to display table without index column using cli-table3
 function displayTableWithoutIndex(data: any[]) {
@@ -99,10 +105,21 @@ async function main() {
           break;
         case 'View Total Utilized Budget of a Department':
           const allDepartmentsForBudget = await dbService.getAllDepartments();
-          const departmentIdForBudget = await promptForDeleteDepartment(allDepartmentsForBudget);
-          const totalBudget = await dbService.getTotalUtilizedBudget(parseInt(departmentIdForBudget));
-          console.log(chalk.blue(`Total Utilized Budget for Department ID ${departmentIdForBudget}:`));
-          console.table(totalBudget);
+          const departmentChoices = allDepartmentsForBudget.map(department => ({
+            name: `${department.department_name} (ID: ${department.id})`,
+            value: department.id
+          }));
+          const budgetAnswers = await inquirer.prompt([
+            {
+              type: 'list',
+              name: 'departmentId',
+              message: 'Select the department to view the total utilized budget:',
+              choices: departmentChoices
+            }
+          ]);
+          const totalBudget = await dbService.getTotalUtilizedBudget(budgetAnswers.departmentId);
+          console.log(chalk.blue(`Total Utilized Budget for ${totalBudget.Department}:`));
+          console.log(`$${totalBudget['Total Utilized Budget']}`);
           break;
         case 'Add Department':
           const departmentName = await promptForDepartmentName();

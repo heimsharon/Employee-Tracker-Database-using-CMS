@@ -33,6 +33,7 @@ function mainMenu() {
                     'Delete Department',
                     'Delete Role',
                     'Delete Employee',
+                    'View Total Utilized Budget of a Department',
                     'Exit'
                 ]
             }

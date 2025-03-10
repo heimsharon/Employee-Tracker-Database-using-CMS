@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const pg_1 = require("pg");
+const dotenv_1 = require("dotenv");
 const databaseServices_1 = require("./databaseServices");
 const prompts_1 = require("./services/prompts");
 const addDepartmentPrompt_1 = require("./services/addDepartmentPrompt");
@@ -21,13 +22,17 @@ const addEmployeePrompt_1 = require("./services/addEmployeePrompt");
 const updateEmployeePrompt_1 = require("./services/updateEmployeePrompt");
 const deletePrompts_1 = require("./services/deletePrompts");
 const chalk_1 = __importDefault(require("chalk"));
+const inquirer_1 = __importDefault(require("inquirer"));
+(0, dotenv_1.config)(); // Load environment variables from .env file
 const dbConfig = {
-    user: 'heimsharon',
-    host: 'localhost',
-    database: 'employees_db',
-    password: 'Thisisstupid11',
-    port: 5432,
+    user: process.env.DB_USER,
+    host: process.env.DB_HOST,
+    database: process.env.DB_DATABASE,
+    password: process.env.DB_PASSWORD,
+    port: parseInt(process.env.DB_PORT || '5432', 10),
 };
+// Log the database configuration to verify the environment variables
+console.log('Database Config:', dbConfig);
 // Custom function to display table without index column using cli-table3
 function displayTableWithoutIndex(data) {
     if (data.length === 0) {
@@ -105,10 +110,21 @@ function main() {
                         break;
                     case 'View Total Utilized Budget of a Department':
                         const allDepartmentsForBudget = yield dbService.getAllDepartments();
-                        const departmentIdForBudget = yield (0, deletePrompts_1.promptForDeleteDepartment)(allDepartmentsForBudget);
-                        const totalBudget = yield dbService.getTotalUtilizedBudget(parseInt(departmentIdForBudget));
-                        console.log(chalk_1.default.blue(`Total Utilized Budget for Department ID ${departmentIdForBudget}:`));
-                        console.table(totalBudget);
+                        const departmentChoices = allDepartmentsForBudget.map(department => ({
+                            name: `${department.department_name} (ID: ${department.id})`,
+                            value: department.id
+                        }));
+                        const budgetAnswers = yield inquirer_1.default.prompt([
+                            {
+                                type: 'list',
+                                name: 'departmentId',
+                                message: 'Select the department to view the total utilized budget:',
+                                choices: departmentChoices
+                            }
+                        ]);
+                        const totalBudget = yield dbService.getTotalUtilizedBudget(budgetAnswers.departmentId);
+                        console.log(chalk_1.default.blue(`Total Utilized Budget for ${totalBudget.Department}:`));
+                        console.log(`$${totalBudget['Total Utilized Budget']}`);
                         break;
                     case 'Add Department':
                         const departmentName = yield (0, addDepartmentPrompt_1.promptForDepartmentName)();
