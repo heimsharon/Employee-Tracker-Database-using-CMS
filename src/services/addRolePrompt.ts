@@ -1,7 +1,7 @@
 import inquirer from 'inquirer';
 
 export async function promptForRoleDetails(departments: any[]) {
-  const departmentChoices = departments.map(department => ({ name: `${department.department_name} (ID: ${department.department_id})`, value: department.department_id }));
+  const departmentChoices = departments.map(department => ({ name: `${department.department_name} (ID: ${department.id})`, value: department.id }));
 
   const answers = await inquirer.prompt([
     {

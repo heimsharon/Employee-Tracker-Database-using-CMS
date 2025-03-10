@@ -1,7 +1,7 @@
 import inquirer from 'inquirer';
 
 export async function promptForDeleteDepartment(departments: any[]) {
-  const departmentChoices = departments.map(department => ({ name: `${department.department_name} (ID: ${department.department_id})`, value: department.department_id }));
+  const departmentChoices = departments.map(department => ({ name: `${department.department_name} (ID: ${department.id})`, value: department.id }));
 
   const answers = await inquirer.prompt([
     {
@@ -16,7 +16,7 @@ export async function promptForDeleteDepartment(departments: any[]) {
 }
 
 export async function promptForDeleteRole(roles: any[]) {
-  const roleChoices = roles.map(role => ({ name: `${role.role_title} (ID: ${role.role_id})`, value: role.role_id }));
+  const roleChoices = roles.map(role => ({ name: `${role.role_title} (ID: ${role.id})`, value: role.id }));
 
   const answers = await inquirer.prompt([
     {

@@ -16,7 +16,7 @@ exports.promptForDeleteEmployee = exports.promptForDeleteRole = exports.promptFo
 const inquirer_1 = __importDefault(require("inquirer"));
 function promptForDeleteDepartment(departments) {
     return __awaiter(this, void 0, void 0, function* () {
-        const departmentChoices = departments.map(department => ({ name: `${department.department_name} (ID: ${department.department_id})`, value: department.department_id }));
+        const departmentChoices = departments.map(department => ({ name: `${department.department_name} (ID: ${department.id})`, value: department.id }));
         const answers = yield inquirer_1.default.prompt([
             {
                 type: 'list',
@@ -31,7 +31,7 @@ function promptForDeleteDepartment(departments) {
 exports.promptForDeleteDepartment = promptForDeleteDepartment;
 function promptForDeleteRole(roles) {
     return __awaiter(this, void 0, void 0, function* () {
-        const roleChoices = roles.map(role => ({ name: `${role.role_title} (ID: ${role.role_id})`, value: role.role_id }));
+        const roleChoices = roles.map(role => ({ name: `${role.role_title} (ID: ${role.id})`, value: role.id }));
         const answers = yield inquirer_1.default.prompt([
             {
                 type: 'list',

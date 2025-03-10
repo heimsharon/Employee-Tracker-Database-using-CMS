@@ -16,7 +16,7 @@ exports.promptForRoleDetails = void 0;
 const inquirer_1 = __importDefault(require("inquirer"));
 function promptForRoleDetails(departments) {
     return __awaiter(this, void 0, void 0, function* () {
-        const departmentChoices = departments.map(department => ({ name: `${department.department_name} (ID: ${department.department_id})`, value: department.department_id }));
+        const departmentChoices = departments.map(department => ({ name: `${department.department_name} (ID: ${department.id})`, value: department.id }));
         const answers = yield inquirer_1.default.prompt([
             {
                 type: 'input',

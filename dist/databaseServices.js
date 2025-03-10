@@ -35,10 +35,10 @@ class DatabaseService {
             return result.rows;
         });
     }
-    addDepartment(departmentName) {
+    addDepartment(name) {
         return __awaiter(this, void 0, void 0, function* () {
             const query = 'INSERT INTO department (department_name) VALUES ($1)';
-            yield this.pool.query(query, [departmentName]);
+            yield this.pool.query(query, [name]);
         });
     }
     addRole(title, salary, departmentId) {

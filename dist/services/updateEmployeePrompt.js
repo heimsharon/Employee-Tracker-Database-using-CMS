@@ -17,7 +17,7 @@ const inquirer_1 = __importDefault(require("inquirer"));
 function promptForUpdateEmployeeRole(employees, roles) {
     return __awaiter(this, void 0, void 0, function* () {
         const employeeChoices = employees.map(employee => ({ name: `${employee.first_name} ${employee.last_name} (ID: ${employee.id})`, value: employee.id }));
-        const roleChoices = roles.map(role => ({ name: `${role.role_title} (ID: ${role.role_id})`, value: role.role_id }));
+        const roleChoices = roles.map(role => ({ name: `${role.role_title} (ID: ${role.id})`, value: role.id }));
         const answers = yield inquirer_1.default.prompt([
             {
                 type: 'list',

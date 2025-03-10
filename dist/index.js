@@ -40,15 +40,47 @@ function main() {
                 switch (action) {
                     case 'View All Departments':
                         const departments = yield dbService.getAllDepartments();
-                        console.log(chalk_1.default.blue('All Departments:'), departments);
+                        console.log(chalk_1.default.blue('All Departments:'));
+                        console.table(departments.map(department => ({
+                            'Department ID': department.id,
+                            'Department Name': department.department_name
+                        })));
                         break;
                     case 'View All Employees':
                         const employees = yield dbService.getAllEmployees();
-                        console.log(chalk_1.default.blue('All Employees:'), employees);
+                        const rolesForEmployees = yield dbService.getAllRoles();
+                        const departmentsForEmployees = yield dbService.getAllDepartments();
+                        const employeesWithDetails = employees.map(employee => {
+                            const role = rolesForEmployees.find(role => role.id === employee.role_id);
+                            const department = role ? departmentsForEmployees.find(dept => dept.id === role.department_id) : null;
+                            const manager = employees.find(emp => emp.id === employee.manager_id);
+                            return {
+                                'Employee ID': employee.id,
+                                'First Name': employee.first_name,
+                                'Last Name': employee.last_name,
+                                'Job Title': role ? role.role_title : 'Unknown',
+                                'Department': department ? department.department_name : 'Unknown',
+                                'Salary': role ? role.salary : 'Unknown',
+                                'Manager': manager ? `${manager.first_name} ${manager.last_name}` : 'None'
+                            };
+                        });
+                        console.log(chalk_1.default.blue('All Employees:'));
+                        console.table(employeesWithDetails);
                         break;
                     case 'View All Roles':
                         const roles = yield dbService.getAllRoles();
-                        console.log(chalk_1.default.blue('All Roles:'), roles);
+                        const departmentsForRoles = yield dbService.getAllDepartments();
+                        const rolesWithDepartments = roles.map(role => {
+                            const department = departmentsForRoles.find(dept => dept.id === role.department_id);
+                            return {
+                                'Role ID': role.id,
+                                'Job Title': role.role_title,
+                                'Department': department ? department.department_name : 'Unknown',
+                                'Salary': role.salary
+                            };
+                        });
+                        console.log(chalk_1.default.blue('All Roles:'));
+                        console.table(rolesWithDepartments);
                         break;
                     case 'Add Department':
                         const departmentName = yield (0, addDepartmentPrompt_1.promptForDepartmentName)();
@@ -65,7 +97,7 @@ function main() {
                         const existingRoles = yield dbService.getAllRoles();
                         const existingEmployees = yield dbService.getAllEmployees();
                         const employeeDetails = yield (0, addEmployeePrompt_1.promptForEmployeeDetails)(existingRoles, existingEmployees);
-                        yield dbService.addEmployee(employeeDetails.firstName, employeeDetails.lastName, parseInt(employeeDetails.roleId), employeeDetails.managerId ? parseInt(employeeDetails.managerId) : null);
+                        yield dbService.addEmployee(employeeDetails.firstName, employeeDetails.lastName, parseInt(employeeDetails.roleId), employeeDetails.managerId);
                         console.log(chalk_1.default.green('Added new employee'));
                         break;
                     case 'Update Employee Role':

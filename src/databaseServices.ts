@@ -25,9 +25,9 @@ export class DatabaseService {
     return result.rows;
   }
 
-  async addDepartment(departmentName: string) {
+  async addDepartment(name: string) {
     const query = 'INSERT INTO department (department_name) VALUES ($1)';
-    await this.pool.query(query, [departmentName]);
+    await this.pool.query(query, [name]);
   }
 
   async addRole(title: string, salary: number, departmentId: number) {

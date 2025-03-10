@@ -31,15 +31,47 @@ async function main() {
       switch (action) {
         case 'View All Departments':
           const departments = await dbService.getAllDepartments();
-          console.log(chalk.blue('All Departments:'), departments);
+          console.log(chalk.blue('All Departments:'));
+          console.table(departments.map(department => ({
+            'Department ID': department.id,
+            'Department Name': department.department_name
+          })));
           break;
         case 'View All Employees':
           const employees = await dbService.getAllEmployees();
-          console.log(chalk.blue('All Employees:'), employees);
+          const rolesForEmployees = await dbService.getAllRoles();
+          const departmentsForEmployees = await dbService.getAllDepartments();
+          const employeesWithDetails = employees.map(employee => {
+            const role = rolesForEmployees.find(role => role.id === employee.role_id);
+            const department = role ? departmentsForEmployees.find(dept => dept.id === role.department_id) : null;
+            const manager = employees.find(emp => emp.id === employee.manager_id);
+            return {
+              'Employee ID': employee.id,
+              'First Name': employee.first_name,
+              'Last Name': employee.last_name,
+              'Job Title': role ? role.role_title : 'Unknown',
+              'Department': department ? department.department_name : 'Unknown',
+              'Salary': role ? role.salary : 'Unknown',
+              'Manager': manager ? `${manager.first_name} ${manager.last_name}` : 'None'
+            };
+          });
+          console.log(chalk.blue('All Employees:'));
+          console.table(employeesWithDetails);
           break;
         case 'View All Roles':
           const roles = await dbService.getAllRoles();
-          console.log(chalk.blue('All Roles:'), roles);
+          const departmentsForRoles = await dbService.getAllDepartments();
+          const rolesWithDepartments = roles.map(role => {
+            const department = departmentsForRoles.find(dept => dept.id === role.department_id);
+            return {
+              'Role ID': role.id,
+              'Job Title': role.role_title,
+              'Department': department ? department.department_name : 'Unknown',
+              'Salary': role.salary
+            };
+          });
+          console.log(chalk.blue('All Roles:'));
+          console.table(rolesWithDepartments);
           break;
         case 'Add Department':
           const departmentName = await promptForDepartmentName();
@@ -56,7 +88,7 @@ async function main() {
           const existingRoles = await dbService.getAllRoles();
           const existingEmployees = await dbService.getAllEmployees();
           const employeeDetails = await promptForEmployeeDetails(existingRoles, existingEmployees);
-          await dbService.addEmployee(employeeDetails.firstName, employeeDetails.lastName, parseInt(employeeDetails.roleId), employeeDetails.managerId ? parseInt(employeeDetails.managerId) : null);
+          await dbService.addEmployee(employeeDetails.firstName, employeeDetails.lastName, parseInt(employeeDetails.roleId), employeeDetails.managerId);
           console.log(chalk.green('Added new employee'));
           break;
         case 'Update Employee Role':

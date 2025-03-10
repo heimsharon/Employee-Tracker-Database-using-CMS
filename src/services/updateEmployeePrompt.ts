@@ -2,7 +2,7 @@ import inquirer from 'inquirer';
 
 export async function promptForUpdateEmployeeRole(employees: any[], roles: any[]) {
   const employeeChoices = employees.map(employee => ({ name: `${employee.first_name} ${employee.last_name} (ID: ${employee.id})`, value: employee.id }));
-  const roleChoices = roles.map(role => ({ name: `${role.role_title} (ID: ${role.role_id})`, value: role.role_id }));
+  const roleChoices = roles.map(role => ({ name: `${role.role_title} (ID: ${role.id})`, value: role.id }));
 
   const answers = await inquirer.prompt([
     {
