@@ -81,7 +81,7 @@ class DatabaseService {
       GROUP BY d.department_name;
     `;
             const result = yield this.pool.query(query, [departmentId]);
-            return result.rows;
+            return result.rows[0];
         });
     }
     addDepartment(name) {

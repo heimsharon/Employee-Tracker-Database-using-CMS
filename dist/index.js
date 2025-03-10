@@ -28,6 +28,17 @@ const dbConfig = {
     password: 'Thisisstupid11',
     port: 5432,
 };
+// Custom function to display table without index column using cli-table3
+function displayTableWithoutIndex(data) {
+    if (data.length === 0) {
+        console.log('No data available.');
+        return;
+    }
+    const headers = Object.keys(data[0]);
+    const rows = data.map(row => headers.map(header => row[header]));
+    console.log(headers.join('\t'));
+    rows.forEach(row => console.log(row.join('\t')));
+}
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         const pool = new pg_1.Pool(dbConfig);
@@ -41,7 +52,7 @@ function main() {
                     case 'View All Departments':
                         const departments = yield dbService.getAllDepartments();
                         console.log(chalk_1.default.blue('All Departments:'));
-                        console.table(departments.map(department => ({
+                        displayTableWithoutIndex(departments.map(department => ({
                             'Department ID': department.id,
                             'Department Name': department.department_name
                         })));
@@ -65,7 +76,7 @@ function main() {
                             };
                         });
                         console.log(chalk_1.default.blue('All Employees:'));
-                        console.table(employeesWithDetails);
+                        displayTableWithoutIndex(employeesWithDetails);
                         break;
                     case 'View Employees by Department':
                         const employeesByDepartment = yield dbService.getEmployeesByDepartment();
