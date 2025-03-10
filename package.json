@@ -3,8 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "build": "tsc",
-    "start": "npm run build && node dist/index.js",
-    "inquirer": "npm i inquirer@8.2.4"
+    "start": "npm run build && node dist/index.js"  
   },
   "dependencies": {
     "chalk": "^5.4.1",
