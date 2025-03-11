@@ -10,7 +10,7 @@ function displayAsciiArt() {
     const asciiArt = `
 ${chalk_1.default.blue('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')}
 ${chalk_1.default.blue('+')}                                                          ${chalk_1.default.blue('+')}
-${chalk_1.default.blue('+')}                      ${chalk_1.default.green('Employee Tracker App')}                      ${chalk_1.default.blue('+')}
+${chalk_1.default.blue('+')}                      ${chalk_1.default.green('Employee Tracker App')}                       ${chalk_1.default.blue('+')}
 ${chalk_1.default.blue('+')}                                                          ${chalk_1.default.blue('+')}
 ${chalk_1.default.blue('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')}
   `;

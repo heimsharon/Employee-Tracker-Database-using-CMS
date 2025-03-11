@@ -1,8 +1,10 @@
 # Employee Tracker Database using CMS
 
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+
 ## Description
 
-This project is an Employee Tracker application that uses a Content Management System (CMS) to manage employee data. It allows you to view, add, update, and delete departments, roles, and employees in a PostgreSQL database.
+This project is an Employee Tracker application that uses a Content Management System (CMS) to manage employee data. It allows you to view, add, update, and delete departments, roles, and employees in a PostgreSQL database. The application provides a command-line interface (CLI) for interacting with the database.
 
 ## Features
 
@@ -25,6 +27,8 @@ This project is an Employee Tracker application that uses a Content Management S
 
 - [Node.js](https://nodejs.org/)
 - [PostgreSQL](https://www.postgresql.org/)
+
+### Steps
 
 1. Clone the repository:
     ```sh
@@ -76,4 +80,4 @@ This project is an Employee Tracker application that uses a Content Management S
 
 ## License
 
-This project is licensed under the MIT License.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
