@@ -21,6 +21,18 @@ const dbConfig = {
   port: parseInt(process.env.DB_PORT || '5432', 10),
 };
 
+// Function to display ASCII art with color
+function displayAsciiArt() {
+  const asciiArt = `
+${chalk.blue('+----------------------------------+')}
+${chalk.blue('|')}                                  ${chalk.blue('|')}
+${chalk.blue('|')}      ${chalk.green('Employee Tracker App')}        ${chalk.blue('|')}
+${chalk.blue('|')}                                  ${chalk.blue('|')}
+${chalk.blue('+----------------------------------+')}
+  `;
+  console.log(asciiArt);
+}
+
 // Custom function to display table without index column using cli-table3
 function displayTableWithoutIndex(data: any[]) {
   if (data.length === 0) {
@@ -47,6 +59,9 @@ async function main() {
 
   try {
     await pool.connect();
+
+    // Display the ASCII art when the app starts
+    displayAsciiArt();
 
     let exit = false;
     while (!exit) {
@@ -158,46 +173,58 @@ async function main() {
           break;
         case 'Delete Department':
           const allDepartments = await dbService.getAllDepartments();
-          const deleteDepartmentId = await promptForDeleteDepartment(allDepartments);
-          try {
-            await dbService.deleteDepartment(parseInt(deleteDepartmentId));
-            console.log(chalk.green('Deleted department'));
-          } catch (error) {
-            if (error instanceof Error) {
-              console.error(chalk.red(`Failed to delete department with ID ${deleteDepartmentId}: ${error.message}`));
-            } else {
-              console.error(chalk.red('Unknown error'), error);
+          const { departmentId, confirmDelete } = await promptForDeleteDepartment(allDepartments);
+          if (confirmDelete) {
+            try {
+              await dbService.deleteDepartment(parseInt(departmentId));
+              console.log(chalk.green('Deleted department'));
+            } catch (error) {
+              if (error instanceof Error) {
+                console.error(chalk.red(`Failed to delete department with ID ${departmentId}: ${error.message}`));
+              } else {
+                console.error(chalk.red('Unknown error'), error);
+              }
             }
+          } else {
+            console.log(chalk.yellow('Deletion cancelled.'));
           }
           break;
 
         case 'Delete Role':
           const allRoles = await dbService.getAllRoles();
-          const deleteRoleId = await promptForDeleteRole(allRoles);
-          try {
-            await dbService.deleteRole(parseInt(deleteRoleId));
-            console.log(chalk.green('Deleted role'));
-          } catch (error) {
-            if (error instanceof Error) {
-              console.error(chalk.red(`Failed to delete role with ID ${deleteRoleId}: ${error.message}`));
-            } else {
-              console.error(chalk.red('Unknown error'), error);
+          const { roleId, confirmDeleteRole } = await promptForDeleteRole(allRoles);
+          if (confirmDeleteRole) {
+            try {
+              await dbService.deleteRole(parseInt(roleId));
+              console.log(chalk.green('Deleted role'));
+            } catch (error) {
+              if (error instanceof Error) {
+                console.error(chalk.red(`Failed to delete role with ID ${roleId}: ${error.message}`));
+              } else {
+                console.error(chalk.red('Unknown error'), error);
+              }
             }
+          } else {
+            console.log(chalk.yellow('Deletion cancelled.'));
           }
           break;
 
         case 'Delete Employee':
           const allEmployees = await dbService.getAllEmployees();
-          const deleteEmployeeId = await promptForDeleteEmployee(allEmployees);
-          try {
-            await dbService.deleteEmployee(parseInt(deleteEmployeeId));
-            console.log(chalk.green('Deleted employee'));
-          } catch (error) {
-            if (error instanceof Error) {
-              console.error(chalk.red(`Failed to delete employee with ID ${deleteEmployeeId}: ${error.message}`));
-            } else {
-              console.error(chalk.red('Unknown error'), error);
+          const { employeeId, confirmDeleteEmployee } = await promptForDeleteEmployee(allEmployees);
+          if (confirmDeleteEmployee) {
+            try {
+              await dbService.deleteEmployee(parseInt(employeeId));
+              console.log(chalk.green('Deleted employee'));
+            } catch (error) {
+              if (error instanceof Error) {
+                console.error(chalk.red(`Failed to delete employee with ID ${employeeId}: ${error.message}`));
+              } else {
+                console.error(chalk.red('Unknown error'), error);
+              }
             }
+          } else {
+            console.log(chalk.yellow('Deletion cancelled.'));
           }
           break;
         case 'Exit':

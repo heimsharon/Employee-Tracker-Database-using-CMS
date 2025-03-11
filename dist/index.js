@@ -32,6 +32,17 @@ const dbConfig = {
     password: process.env.DB_PASSWORD,
     port: parseInt(process.env.DB_PORT || '5432', 10),
 };
+// Function to display ASCII art with color
+function displayAsciiArt() {
+    const asciiArt = `
+${chalk_1.default.blue('+----------------------------------+')}
+${chalk_1.default.blue('|')}                                  ${chalk_1.default.blue('|')}
+${chalk_1.default.blue('|')}      ${chalk_1.default.green('Employee Tracker App')}        ${chalk_1.default.blue('|')}
+${chalk_1.default.blue('|')}                                  ${chalk_1.default.blue('|')}
+${chalk_1.default.blue('+----------------------------------+')}
+  `;
+    console.log(asciiArt);
+}
 // Custom function to display table without index column using cli-table3
 function displayTableWithoutIndex(data) {
     if (data.length === 0) {
@@ -54,6 +65,8 @@ function main() {
         const dbService = new databaseServices_1.DatabaseService(pool);
         try {
             yield pool.connect();
+            // Display the ASCII art when the app starts
+            displayAsciiArt();
             let exit = false;
             while (!exit) {
                 const action = yield (0, prompts_1.mainMenu)();
@@ -163,50 +176,65 @@ function main() {
                         break;
                     case 'Delete Department':
                         const allDepartments = yield dbService.getAllDepartments();
-                        const deleteDepartmentId = yield (0, deletePrompts_1.promptForDeleteDepartment)(allDepartments);
-                        try {
-                            yield dbService.deleteDepartment(parseInt(deleteDepartmentId));
-                            console.log(chalk_1.default.green('Deleted department'));
+                        const { departmentId, confirmDelete } = yield (0, deletePrompts_1.promptForDeleteDepartment)(allDepartments);
+                        if (confirmDelete) {
+                            try {
+                                yield dbService.deleteDepartment(parseInt(departmentId));
+                                console.log(chalk_1.default.green('Deleted department'));
+                            }
+                            catch (error) {
+                                if (error instanceof Error) {
+                                    console.error(chalk_1.default.red(`Failed to delete department with ID ${departmentId}: ${error.message}`));
+                                }
+                                else {
+                                    console.error(chalk_1.default.red('Unknown error'), error);
+                                }
+                            }
                         }
-                        catch (error) {
-                            if (error instanceof Error) {
-                                console.error(chalk_1.default.red(`Failed to delete department with ID ${deleteDepartmentId}: ${error.message}`));
-                            }
-                            else {
-                                console.error(chalk_1.default.red('Unknown error'), error);
-                            }
+                        else {
+                            console.log(chalk_1.default.yellow('Deletion cancelled.'));
                         }
                         break;
                     case 'Delete Role':
                         const allRoles = yield dbService.getAllRoles();
-                        const deleteRoleId = yield (0, deletePrompts_1.promptForDeleteRole)(allRoles);
-                        try {
-                            yield dbService.deleteRole(parseInt(deleteRoleId));
-                            console.log(chalk_1.default.green('Deleted role'));
+                        const { roleId, confirmDeleteRole } = yield (0, deletePrompts_1.promptForDeleteRole)(allRoles);
+                        if (confirmDeleteRole) {
+                            try {
+                                yield dbService.deleteRole(parseInt(roleId));
+                                console.log(chalk_1.default.green('Deleted role'));
+                            }
+                            catch (error) {
+                                if (error instanceof Error) {
+                                    console.error(chalk_1.default.red(`Failed to delete role with ID ${roleId}: ${error.message}`));
+                                }
+                                else {
+                                    console.error(chalk_1.default.red('Unknown error'), error);
+                                }
+                            }
                         }
-                        catch (error) {
-                            if (error instanceof Error) {
-                                console.error(chalk_1.default.red(`Failed to delete role with ID ${deleteRoleId}: ${error.message}`));
-                            }
-                            else {
-                                console.error(chalk_1.default.red('Unknown error'), error);
-                            }
+                        else {
+                            console.log(chalk_1.default.yellow('Deletion cancelled.'));
                         }
                         break;
                     case 'Delete Employee':
                         const allEmployees = yield dbService.getAllEmployees();
-                        const deleteEmployeeId = yield (0, deletePrompts_1.promptForDeleteEmployee)(allEmployees);
-                        try {
-                            yield dbService.deleteEmployee(parseInt(deleteEmployeeId));
-                            console.log(chalk_1.default.green('Deleted employee'));
+                        const { employeeId, confirmDeleteEmployee } = yield (0, deletePrompts_1.promptForDeleteEmployee)(allEmployees);
+                        if (confirmDeleteEmployee) {
+                            try {
+                                yield dbService.deleteEmployee(parseInt(employeeId));
+                                console.log(chalk_1.default.green('Deleted employee'));
+                            }
+                            catch (error) {
+                                if (error instanceof Error) {
+                                    console.error(chalk_1.default.red(`Failed to delete employee with ID ${employeeId}: ${error.message}`));
+                                }
+                                else {
+                                    console.error(chalk_1.default.red('Unknown error'), error);
+                                }
+                            }
                         }
-                        catch (error) {
-                            if (error instanceof Error) {
-                                console.error(chalk_1.default.red(`Failed to delete employee with ID ${deleteEmployeeId}: ${error.message}`));
-                            }
-                            else {
-                                console.error(chalk_1.default.red('Unknown error'), error);
-                            }
+                        else {
+                            console.log(chalk_1.default.yellow('Deletion cancelled.'));
                         }
                         break;
                     case 'Exit':
