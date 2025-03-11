@@ -24,7 +24,7 @@ VALUES  ('HR Manager', 75000, 1),
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES  ('Alice', 'Johnson', 1, NULL), -- HR Manager
         ('Bob', 'Smith', 2, NULL), -- Software Engineer
-        ('Charlie', 'Brown', 3, NULL), -- Sales Manager
+        ('Charlie', 'Dunn', 3, NULL), -- Sales Manager
         ('Daisy', 'Miller', 4, NULL), -- Marketing Specialist
         ('Evan', 'Williams', 5, NULL), -- Finance Analyst
         ('Fiona', 'Clark', 6, NULL), -- Operations Supervisor

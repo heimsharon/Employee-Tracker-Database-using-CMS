@@ -2,14 +2,14 @@ import { Pool } from 'pg';
 import { config } from 'dotenv';
 import { DatabaseService } from './databaseServices';
 import { mainMenu } from './services/prompts';
-import { promptForDepartmentName } from './services/addDepartmentPrompt';
-import { promptForRoleDetails } from './services/addRolePrompt';
-import { promptForEmployeeDetails } from './services/addEmployeePrompt';
-import { promptForUpdateEmployeeRole, promptForUpdateEmployeeManager } from './services/updateEmployeePrompt';
-import { promptForDeleteDepartment, promptForDeleteRole, promptForDeleteEmployee } from './services/deletePrompts';
-import chalk from 'chalk';
+import { displayAsciiArt } from './services/utils/asciiArt';
+import { displayTableWithoutIndex } from './services/utils/displayTable';
+import { addDepartment, addRole, addEmployee } from './operations/addOperations';
+import { updateEmployeeRole, updateEmployeeManager } from './operations/updateOperations';
+import { deleteDepartment, deleteRole, deleteEmployee } from './operations/deleteOperations';
+import { viewAllDepartments, viewAllEmployees, viewEmployeesByDepartment, viewEmployeesByManager, viewAllRoles } from './operations/viewOperations';
 import inquirer from 'inquirer';
-import Table from 'cli-table3';
+import chalk from 'chalk';
 
 config(); // Load environment variables from .env file
 
@@ -20,38 +20,6 @@ const dbConfig = {
   password: process.env.DB_PASSWORD as string,
   port: parseInt(process.env.DB_PORT || '5432', 10),
 };
-
-// Function to display ASCII art with color
-function displayAsciiArt() {
-  const asciiArt = `
-${chalk.blue('+----------------------------------+')}
-${chalk.blue('|')}                                  ${chalk.blue('|')}
-${chalk.blue('|')}      ${chalk.green('Employee Tracker App')}        ${chalk.blue('|')}
-${chalk.blue('|')}                                  ${chalk.blue('|')}
-${chalk.blue('+----------------------------------+')}
-  `;
-  console.log(asciiArt);
-}
-
-// Custom function to display table without index column using cli-table3
-function displayTableWithoutIndex(data: any[]) {
-  if (data.length === 0) {
-    console.log('No data available.');
-    return;
-  }
-
-  const headers = Object.keys(data[0]);
-  const table = new Table({
-    head: headers,
-    colWidths: headers.map(() => 20),
-  });
-
-  data.forEach(row => {
-    table.push(headers.map(header => row[header]));
-  });
-
-  console.log(table.toString());
-}
 
 async function main() {
   const pool = new Pool(dbConfig);
@@ -69,58 +37,19 @@ async function main() {
 
       switch (action) {
         case 'View All Departments':
-          const departments = await dbService.getAllDepartments();
-          console.log(chalk.blue('All Departments:'));
-          displayTableWithoutIndex(departments.map(department => ({
-            'Department ID': department.id,
-            'Department Name': department.department_name
-          })));
+          await viewAllDepartments(dbService);
           break;
         case 'View All Employees':
-          const employees = await dbService.getAllEmployees();
-          const rolesForEmployees = await dbService.getAllRoles();
-          const departmentsForEmployees = await dbService.getAllDepartments();
-          const employeesWithDetails = employees.map(employee => {
-            const role = rolesForEmployees.find(role => role.id === employee.role_id);
-            const department = role ? departmentsForEmployees.find(dept => dept.id === role.department_id) : null;
-            const manager = employees.find(emp => emp.id === employee.manager_id);
-            return {
-              'Employee ID': employee.id,
-              'First Name': employee.first_name,
-              'Last Name': employee.last_name,
-              'Job Title': role ? role.role_title : 'Unknown',
-              'Department': department ? department.department_name : 'Unknown',
-              'Salary': role ? role.salary : 'Unknown',
-              'Manager': manager ? `${manager.first_name} ${manager.last_name}` : 'None'
-            };
-          });
-          console.log(chalk.blue('All Employees:'));
-          displayTableWithoutIndex(employeesWithDetails);
+          await viewAllEmployees(dbService);
           break;
         case 'View Employees by Department':
-          const employeesByDepartment = await dbService.getEmployeesByDepartment();
-          console.log(chalk.blue('Employees by Department:'));
-          displayTableWithoutIndex(employeesByDepartment);
+          await viewEmployeesByDepartment(dbService);
           break;
         case 'View Employees by Manager':
-          const employeesByManager = await dbService.getEmployeesByManager();
-          console.log(chalk.blue('Employees by Manager:'));
-          displayTableWithoutIndex(employeesByManager);
+          await viewEmployeesByManager(dbService);
           break;
         case 'View All Roles':
-          const roles = await dbService.getAllRoles();
-          const departmentsForRoles = await dbService.getAllDepartments();
-          const rolesWithDepartments = roles.map(role => {
-            const department = departmentsForRoles.find(dept => dept.id === role.department_id);
-            return {
-              'Role ID': role.id,
-              'Job Title': role.role_title,
-              'Department': department ? department.department_name : 'Unknown',
-              'Salary': role.salary
-            };
-          });
-          console.log(chalk.blue('All Roles:'));
-          displayTableWithoutIndex(rolesWithDepartments);
+          await viewAllRoles(dbService);
           break;
         case 'View Total Utilized Budget of a Department':
           const allDepartmentsForBudget = await dbService.getAllDepartments();
@@ -141,91 +70,28 @@ async function main() {
           console.log(`$${totalBudget['Total Utilized Budget']}`);
           break;
         case 'Add Department':
-          const departmentName = await promptForDepartmentName();
-          await dbService.addDepartment(departmentName);
-          console.log(chalk.green('Added new department'));
+          await addDepartment(dbService);
           break;
         case 'Add Role':
-          const existingDepartments = await dbService.getAllDepartments();
-          const roleDetails = await promptForRoleDetails(existingDepartments);
-          await dbService.addRole(roleDetails.roleTitle, parseFloat(roleDetails.salary), parseInt(roleDetails.departmentId));
-          console.log(chalk.green('Added new role'));
+          await addRole(dbService);
           break;
         case 'Add Employee':
-          const existingRoles = await dbService.getAllRoles();
-          const existingEmployees = await dbService.getAllEmployees();
-          const employeeDetails = await promptForEmployeeDetails(existingRoles, existingEmployees);
-          await dbService.addEmployee(employeeDetails.firstName, employeeDetails.lastName, parseInt(employeeDetails.roleId), employeeDetails.managerId);
-          console.log(chalk.green('Added new employee'));
+          await addEmployee(dbService);
           break;
         case 'Update Employee Role':
-          const allEmployeesForRoleUpdate = await dbService.getAllEmployees();
-          const allRolesForRoleUpdate = await dbService.getAllRoles();
-          const updateRoleDetails = await promptForUpdateEmployeeRole(allEmployeesForRoleUpdate, allRolesForRoleUpdate);
-          await dbService.updateEmployeeRole(parseInt(updateRoleDetails.employeeId), parseInt(updateRoleDetails.roleId));
-          console.log(chalk.green('Updated employee role'));
+          await updateEmployeeRole(dbService);
           break;
         case 'Update Employee Manager':
-          const allEmployeesForManagerUpdate = await dbService.getAllEmployees();
-          const updateManagerDetails = await promptForUpdateEmployeeManager(allEmployeesForManagerUpdate);
-          await dbService.updateEmployeeManager(parseInt(updateManagerDetails.employeeId), updateManagerDetails.managerId !== null ? parseInt(updateManagerDetails.managerId) : null);
-          console.log(chalk.green('Updated employee manager'));
+          await updateEmployeeManager(dbService);
           break;
         case 'Delete Department':
-          const allDepartments = await dbService.getAllDepartments();
-          const { departmentId, confirmDelete } = await promptForDeleteDepartment(allDepartments);
-          if (confirmDelete) {
-            try {
-              await dbService.deleteDepartment(parseInt(departmentId));
-              console.log(chalk.green('Deleted department'));
-            } catch (error) {
-              if (error instanceof Error) {
-                console.error(chalk.red(`Failed to delete department with ID ${departmentId}: ${error.message}`));
-              } else {
-                console.error(chalk.red('Unknown error'), error);
-              }
-            }
-          } else {
-            console.log(chalk.yellow('Deletion cancelled.'));
-          }
+          await deleteDepartment(dbService);
           break;
-
         case 'Delete Role':
-          const allRoles = await dbService.getAllRoles();
-          const { roleId, confirmDeleteRole } = await promptForDeleteRole(allRoles);
-          if (confirmDeleteRole) {
-            try {
-              await dbService.deleteRole(parseInt(roleId));
-              console.log(chalk.green('Deleted role'));
-            } catch (error) {
-              if (error instanceof Error) {
-                console.error(chalk.red(`Failed to delete role with ID ${roleId}: ${error.message}`));
-              } else {
-                console.error(chalk.red('Unknown error'), error);
-              }
-            }
-          } else {
-            console.log(chalk.yellow('Deletion cancelled.'));
-          }
+          await deleteRole(dbService);
           break;
-
         case 'Delete Employee':
-          const allEmployees = await dbService.getAllEmployees();
-          const { employeeId, confirmDeleteEmployee } = await promptForDeleteEmployee(allEmployees);
-          if (confirmDeleteEmployee) {
-            try {
-              await dbService.deleteEmployee(parseInt(employeeId));
-              console.log(chalk.green('Deleted employee'));
-            } catch (error) {
-              if (error instanceof Error) {
-                console.error(chalk.red(`Failed to delete employee with ID ${employeeId}: ${error.message}`));
-              } else {
-                console.error(chalk.red('Unknown error'), error);
-              }
-            }
-          } else {
-            console.log(chalk.yellow('Deletion cancelled.'));
-          }
+          await deleteEmployee(dbService);
           break;
         case 'Exit':
           exit = true;
