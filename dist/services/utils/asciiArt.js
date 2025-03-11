@@ -1,5 +1,5 @@
 "use strict";
-// This is the small title image displayed when the application is loaded
+// This is the title image displayed when the application is loaded
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -8,11 +8,11 @@ exports.displayAsciiArt = void 0;
 const chalk_1 = __importDefault(require("chalk"));
 function displayAsciiArt() {
     const asciiArt = `
-${chalk_1.default.blue('++++++++++++++++++++++++++++++++++++++++++++++')}
-${chalk_1.default.blue('+')}                                            ${chalk_1.default.blue('+')}
-${chalk_1.default.blue('+')}            ${chalk_1.default.green('Employee Tracker App')}            ${chalk_1.default.blue('+')}
-${chalk_1.default.blue('+')}                                            ${chalk_1.default.blue('+')}
-${chalk_1.default.blue('++++++++++++++++++++++++++++++++++++++++++++++')}
+${chalk_1.default.blue('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')}
+${chalk_1.default.blue('+')}                                                          ${chalk_1.default.blue('+')}
+${chalk_1.default.blue('+')}                      ${chalk_1.default.green('Employee Tracker App')}                      ${chalk_1.default.blue('+')}
+${chalk_1.default.blue('+')}                                                          ${chalk_1.default.blue('+')}
+${chalk_1.default.blue('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')}
   `;
     console.log(asciiArt);
 }

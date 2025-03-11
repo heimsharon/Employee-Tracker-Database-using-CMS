@@ -1,16 +1,18 @@
-// This file contains functions to view various data from the database - view all departments, all employees, employees by department, employees by manager, and all roles.
+// This file contains functions to view various data from the database. 
+// It includes methods to view all departments, all employees, employees by department, employees by manager, and all roles.
 
 import { DatabaseService } from '../database/databaseServices';
 import { displayTableWithoutIndex } from '../services/utils/displayTable';
+import { colorDepartmentName, colorRoleName, colorSalary, colorEmployeeName } from '../services/utils/colorUtils';
 import chalk from 'chalk';
-import { Role, Department } from '../database/roleServices'
+import { Role, Department } from '../database/roleServices';
 
 export async function viewAllDepartments(departmentService: DatabaseService['departmentService']) {
     const departments = await departmentService.getAllDepartments();
     console.log(chalk.blue('All Departments:'));
     displayTableWithoutIndex(departments.map(department => ({
         'Department ID': department.id,
-        'Department Name': department.department_name
+        'Department Name': colorDepartmentName(department.department_name)
     })));
 }
 
@@ -24,12 +26,12 @@ export async function viewAllEmployees(employeeService: DatabaseService['employe
         const manager = employees.find(emp => emp.id === employee.manager_id);
         return {
             'Employee ID': employee.id,
-            'First Name': employee.first_name,
-            'Last Name': employee.last_name,
-            'Job Title': role ? role.role_title : 'Unknown',
-            'Department': department ? department.department_name : 'Unknown',
-            'Salary': role ? role.salary : 'Unknown',
-            'Manager': manager ? `${manager.first_name} ${manager.last_name}` : 'None'
+            'First Name': colorEmployeeName(employee.first_name),
+            'Last Name': colorEmployeeName(employee.last_name),
+            'Job Title': role ? colorRoleName(role.role_title) : 'Unknown',
+            'Department': department ? colorDepartmentName(department.department_name) : 'Unknown',
+            'Salary': role ? colorSalary(role.salary) : 'Unknown',
+            'Manager': manager ? colorEmployeeName(`${manager.first_name} ${manager.last_name}`) : 'None'
         };
     });
     console.log(chalk.blue('All Employees:'));
@@ -39,13 +41,23 @@ export async function viewAllEmployees(employeeService: DatabaseService['employe
 export async function viewEmployeesByDepartment(employeeService: DatabaseService['employeeService']) {
     const employeesByDepartment = await employeeService.getEmployeesByDepartment();
     console.log(chalk.blue('Employees by Department:'));
-    displayTableWithoutIndex(employeesByDepartment);
+    displayTableWithoutIndex(employeesByDepartment.map(employee => ({
+        'Employee ID': employee.id,
+        'First Name': colorEmployeeName(employee.first_name),
+        'Last Name': colorEmployeeName(employee.last_name),
+        'Department': colorDepartmentName(employee.department_name)
+    })));
 }
 
 export async function viewEmployeesByManager(employeeService: DatabaseService['employeeService']) {
     const employeesByManager = await employeeService.getEmployeesByManager();
     console.log(chalk.blue('Employees by Manager:'));
-    displayTableWithoutIndex(employeesByManager);
+    displayTableWithoutIndex(employeesByManager.map(employee => ({
+        'Employee ID': employee.id,
+        'First Name': colorEmployeeName(employee.first_name),
+        'Last Name': colorEmployeeName(employee.last_name),
+        'Manager': colorEmployeeName(employee.manager)
+    })));
 }
 
 export async function viewAllRoles(roleService: DatabaseService['roleService'], departmentService: DatabaseService['departmentService']) {
@@ -55,9 +67,9 @@ export async function viewAllRoles(roleService: DatabaseService['roleService'], 
         const department = departmentsForRoles.find((dept: Department) => dept.id === role.department_id);
         return {
             'Role ID': role.id,
-            'Job Title': role.role_title,
-            'Department': department ? department.department_name : 'Unknown',
-            'Salary': role.salary
+            'Job Title': colorRoleName(role.role_title),
+            'Department': department ? colorDepartmentName(department.department_name) : 'Unknown',
+            'Salary': colorSalary(role.salary)
         };
     });
     console.log(chalk.blue('All Roles:'));

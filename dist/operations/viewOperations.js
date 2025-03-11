@@ -1,5 +1,6 @@
 "use strict";
-// This file contains functions to view various data from the database - view all departments, all employees, employees by department, employees by manager, and all roles.
+// This file contains functions to view various data from the database. 
+// It includes methods to view all departments, all employees, employees by department, employees by manager, and all roles.
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -15,6 +16,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.viewAllRoles = exports.viewEmployeesByManager = exports.viewEmployeesByDepartment = exports.viewAllEmployees = exports.viewAllDepartments = void 0;
 const displayTable_1 = require("../services/utils/displayTable");
+const colorUtils_1 = require("../services/utils/colorUtils");
 const chalk_1 = __importDefault(require("chalk"));
 function viewAllDepartments(departmentService) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -22,7 +24,7 @@ function viewAllDepartments(departmentService) {
         console.log(chalk_1.default.blue('All Departments:'));
         (0, displayTable_1.displayTableWithoutIndex)(departments.map(department => ({
             'Department ID': department.id,
-            'Department Name': department.department_name
+            'Department Name': (0, colorUtils_1.colorDepartmentName)(department.department_name)
         })));
     });
 }
@@ -38,12 +40,12 @@ function viewAllEmployees(employeeService, roleService, departmentService) {
             const manager = employees.find(emp => emp.id === employee.manager_id);
             return {
                 'Employee ID': employee.id,
-                'First Name': employee.first_name,
-                'Last Name': employee.last_name,
-                'Job Title': role ? role.role_title : 'Unknown',
-                'Department': department ? department.department_name : 'Unknown',
-                'Salary': role ? role.salary : 'Unknown',
-                'Manager': manager ? `${manager.first_name} ${manager.last_name}` : 'None'
+                'First Name': (0, colorUtils_1.colorEmployeeName)(employee.first_name),
+                'Last Name': (0, colorUtils_1.colorEmployeeName)(employee.last_name),
+                'Job Title': role ? (0, colorUtils_1.colorRoleName)(role.role_title) : 'Unknown',
+                'Department': department ? (0, colorUtils_1.colorDepartmentName)(department.department_name) : 'Unknown',
+                'Salary': role ? (0, colorUtils_1.colorSalary)(role.salary) : 'Unknown',
+                'Manager': manager ? (0, colorUtils_1.colorEmployeeName)(`${manager.first_name} ${manager.last_name}`) : 'None'
             };
         });
         console.log(chalk_1.default.blue('All Employees:'));
@@ -55,7 +57,12 @@ function viewEmployeesByDepartment(employeeService) {
     return __awaiter(this, void 0, void 0, function* () {
         const employeesByDepartment = yield employeeService.getEmployeesByDepartment();
         console.log(chalk_1.default.blue('Employees by Department:'));
-        (0, displayTable_1.displayTableWithoutIndex)(employeesByDepartment);
+        (0, displayTable_1.displayTableWithoutIndex)(employeesByDepartment.map(employee => ({
+            'Employee ID': employee.id,
+            'First Name': (0, colorUtils_1.colorEmployeeName)(employee.first_name),
+            'Last Name': (0, colorUtils_1.colorEmployeeName)(employee.last_name),
+            'Department': (0, colorUtils_1.colorDepartmentName)(employee.department_name)
+        })));
     });
 }
 exports.viewEmployeesByDepartment = viewEmployeesByDepartment;
@@ -63,7 +70,12 @@ function viewEmployeesByManager(employeeService) {
     return __awaiter(this, void 0, void 0, function* () {
         const employeesByManager = yield employeeService.getEmployeesByManager();
         console.log(chalk_1.default.blue('Employees by Manager:'));
-        (0, displayTable_1.displayTableWithoutIndex)(employeesByManager);
+        (0, displayTable_1.displayTableWithoutIndex)(employeesByManager.map(employee => ({
+            'Employee ID': employee.id,
+            'First Name': (0, colorUtils_1.colorEmployeeName)(employee.first_name),
+            'Last Name': (0, colorUtils_1.colorEmployeeName)(employee.last_name),
+            'Manager': (0, colorUtils_1.colorEmployeeName)(employee.manager)
+        })));
     });
 }
 exports.viewEmployeesByManager = viewEmployeesByManager;
@@ -75,9 +87,9 @@ function viewAllRoles(roleService, departmentService) {
             const department = departmentsForRoles.find((dept) => dept.id === role.department_id);
             return {
                 'Role ID': role.id,
-                'Job Title': role.role_title,
-                'Department': department ? department.department_name : 'Unknown',
-                'Salary': role.salary
+                'Job Title': (0, colorUtils_1.colorRoleName)(role.role_title),
+                'Department': department ? (0, colorUtils_1.colorDepartmentName)(department.department_name) : 'Unknown',
+                'Salary': (0, colorUtils_1.colorSalary)(role.salary)
             };
         });
         console.log(chalk_1.default.blue('All Roles:'));
