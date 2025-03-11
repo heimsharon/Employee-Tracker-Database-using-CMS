@@ -8,8 +8,9 @@ This project is an Employee Tracker application that uses a Content Management S
 
 - View all departments, roles, and employees
 - Add a department, role, or employee
-- Update employee roles
+- Update employee roles and managers
 - Delete departments, roles, or employees
+- View total salary of a department 
 
 ## Table of Contents
 
