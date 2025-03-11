@@ -4,15 +4,26 @@
 
 This project is an Employee Tracker application that uses a Content Management System (CMS) to manage employee data. It allows you to view, add, update, and delete departments, roles, and employees in a PostgreSQL database.
 
+## Features
+
+- View all departments, roles, and employees
+- Add a department, role, or employee
+- Update employee roles
+- Delete departments, roles, or employees
+
 ## Table of Contents
 
 - [Installation](#installation)
 - [Usage](#usage)
 - [Media](#media)
-- [Scripts](#scripts)
 - [License](#license)
 
 ## Installation
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/)
+- [PostgreSQL](https://www.postgresql.org/)
 
 1. Clone the repository:
     ```sh
