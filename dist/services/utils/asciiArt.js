@@ -1,5 +1,5 @@
 "use strict";
-// This is the small title image when the application is loaded
+// This is the small title image displayed when the application is loaded
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };

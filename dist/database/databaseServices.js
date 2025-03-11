@@ -1,4 +1,6 @@
 "use strict";
+// This file contains the DatabaseService class, which acts as a central point to access the department, employee, and role services from the actual database
+// It initializes instances of DepartmentService, EmployeeService, and RoleService using a provided database connection pool.
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DatabaseService = void 0;
 const departmentServices_1 = require("./departmentServices");

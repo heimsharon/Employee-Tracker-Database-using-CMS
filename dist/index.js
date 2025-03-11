@@ -1,5 +1,5 @@
 "use strict";
-// This is the file the application runs from, as in complies all the supporting files. 
+// This is the file the application runs from, as it compiles all the supporting files. 
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
