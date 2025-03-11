@@ -1,3 +1,5 @@
+// This file is the prompt method to add a department.
+
 import inquirer from 'inquirer';
 
 export async function promptForDepartmentName() {

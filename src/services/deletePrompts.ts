@@ -1,3 +1,5 @@
+// This file is the prompt method to delete a department, role or employee,with warning messages.
+
 import inquirer from 'inquirer';
 import { DatabaseService } from '../database/databaseServices';
 import { Pool } from 'pg';

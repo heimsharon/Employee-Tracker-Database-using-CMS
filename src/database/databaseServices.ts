@@ -4,13 +4,13 @@ import { EmployeeService } from './employeeServices';
 import { RoleService } from './roleServices'
 
 export class DatabaseService {
-  public departmentService: DepartmentService;
-  public employeeService: EmployeeService;
-  public roleService: RoleService;
+    public departmentService: DepartmentService;
+    public employeeService: EmployeeService;
+    public roleService: RoleService;
 
-  constructor(pool: Pool) {
-    this.departmentService = new DepartmentService(pool);
-    this.employeeService = new EmployeeService(pool);
-    this.roleService = new RoleService(pool);
-  }
+    constructor(pool: Pool) {
+        this.departmentService = new DepartmentService(pool);
+        this.employeeService = new EmployeeService(pool);
+        this.roleService = new RoleService(pool);
+    }
 }

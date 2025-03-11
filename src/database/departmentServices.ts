@@ -1,3 +1,5 @@
+// This file contains the DepartmentService class, which provides methods to interact with the department-related data in the database.
+
 import { Pool } from 'pg';
 
 export class DepartmentService {

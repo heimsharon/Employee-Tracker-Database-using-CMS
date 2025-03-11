@@ -1,3 +1,5 @@
+// This file contains functions to add new departments, roles, and employees to the database. 
+
 import { DatabaseService } from '../database/databaseServices';
 import { promptForDepartmentName } from '../services/addDepartmentPrompt';
 import { promptForRoleDetails } from '../services/addRolePrompt';

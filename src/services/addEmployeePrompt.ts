@@ -1,3 +1,5 @@
+// This file is the prompt methods to add an employee
+
 import inquirer from 'inquirer';
 
 export async function promptForEmployeeDetails(roles: any[], employees: any[]) {

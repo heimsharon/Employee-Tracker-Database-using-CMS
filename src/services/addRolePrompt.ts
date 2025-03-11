@@ -1,3 +1,5 @@
+// This file is the prompt method to add a role
+
 import inquirer from 'inquirer';
 
 export async function promptForRoleDetails(departments: any[]) {

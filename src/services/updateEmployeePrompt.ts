@@ -1,3 +1,5 @@
+// This file is the prompt method to update the employee role and manager
+
 import inquirer from 'inquirer';
 
 export async function promptForUpdateEmployeeRole(employees: any[], roles: any[]) {

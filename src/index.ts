@@ -1,11 +1,10 @@
-// This is the file the application runs from, as in complies all the supporting files. 
+// This is the file the application runs from, as it compiles all the supporting files. 
 
 import { Pool } from 'pg';
 import { config } from 'dotenv';
 import { DatabaseService } from './database/databaseServices';
 import { mainMenu } from './services/prompts';
 import { displayAsciiArt } from './services/utils/asciiArt';
-import { displayTableWithoutIndex } from './services/utils/displayTable';
 import { addDepartment, addRole, addEmployee } from './operations/addOperations';
 import { updateEmployeeRole, updateEmployeeManager } from './operations/updateOperations';
 import { deleteDepartment, deleteRole, deleteEmployee } from './operations/deleteOperations';

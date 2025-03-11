@@ -1,3 +1,5 @@
+// This file contains the RoleService class, which provides methods to interact with the role-related data in the database. 
+
 import { Pool } from 'pg';
 
 export interface Role {

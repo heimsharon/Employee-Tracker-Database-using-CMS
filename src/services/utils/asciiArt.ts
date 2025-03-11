@@ -1,4 +1,4 @@
-// This is the small title image when the application is loaded
+// This is the small title image displayed when the application is loaded
 
 import chalk from 'chalk';
 

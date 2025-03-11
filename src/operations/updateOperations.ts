@@ -1,3 +1,5 @@
+// This file contains functions to update existing employee data in the database, including their manager. 
+
 import { DatabaseService } from '../database/databaseServices';
 import { promptForUpdateEmployeeRole, promptForUpdateEmployeeManager } from '../services/updateEmployeePrompt';
 import chalk from 'chalk';

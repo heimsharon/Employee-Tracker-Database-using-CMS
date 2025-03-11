@@ -1,3 +1,5 @@
+// This file sets up the prompt menu.
+
 import inquirer from 'inquirer';
 
 export async function mainMenu() {

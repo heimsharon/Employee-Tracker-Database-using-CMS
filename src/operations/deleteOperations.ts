@@ -1,3 +1,5 @@
+// This file contains functions to delete departments, roles, and employees from the database. 
+
 import { DatabaseService } from '../database/databaseServices';
 import { promptForDeleteDepartment, promptForDeleteRole, promptForDeleteEmployee } from '../services/deletePrompts';
 import chalk from 'chalk';

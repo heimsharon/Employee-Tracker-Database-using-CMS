@@ -1,3 +1,5 @@
+// This file contains functions to view various data from the database - view all departments, all employees, employees by department, employees by manager, and all roles.
+
 import { DatabaseService } from '../database/databaseServices';
 import { displayTableWithoutIndex } from '../services/utils/displayTable';
 import chalk from 'chalk';
