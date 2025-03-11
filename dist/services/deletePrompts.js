@@ -14,7 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.promptForDeleteEmployee = exports.promptForDeleteRole = exports.promptForDeleteDepartment = void 0;
 const inquirer_1 = __importDefault(require("inquirer"));
-const databaseServices_1 = require("../databaseServices");
+const databaseServices_1 = require("../database/databaseServices");
 const pg_1 = require("pg");
 const pool = new pg_1.Pool({
     user: 'heimsharon',

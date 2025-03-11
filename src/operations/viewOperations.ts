@@ -1,9 +1,10 @@
-import { DatabaseService } from '../databaseServices';
+import { DatabaseService } from '../database/databaseServices';
 import { displayTableWithoutIndex } from '../services/utils/displayTable';
 import chalk from 'chalk';
+import { Role, Department } from '../database/roleServices'
 
-export async function viewAllDepartments(dbService: DatabaseService) {
-    const departments = await dbService.getAllDepartments();
+export async function viewAllDepartments(departmentService: DatabaseService['departmentService']) {
+    const departments = await departmentService.getAllDepartments();
     console.log(chalk.blue('All Departments:'));
     displayTableWithoutIndex(departments.map(department => ({
         'Department ID': department.id,
@@ -11,13 +12,13 @@ export async function viewAllDepartments(dbService: DatabaseService) {
     })));
 }
 
-export async function viewAllEmployees(dbService: DatabaseService) {
-    const employees = await dbService.getAllEmployees();
-    const rolesForEmployees = await dbService.getAllRoles();
-    const departmentsForEmployees = await dbService.getAllDepartments();
+export async function viewAllEmployees(employeeService: DatabaseService['employeeService'], roleService: DatabaseService['roleService'], departmentService: DatabaseService['departmentService']) {
+    const employees = await employeeService.getAllEmployees();
+    const rolesForEmployees = await roleService.getAllRoles();
+    const departmentsForEmployees = await departmentService.getAllDepartments();
     const employeesWithDetails = employees.map(employee => {
-        const role = rolesForEmployees.find(role => role.id === employee.role_id);
-        const department = role ? departmentsForEmployees.find(dept => dept.id === role.department_id) : null;
+        const role = rolesForEmployees.find((role: Role) => role.id === employee.role_id);
+        const department = role ? departmentsForEmployees.find((dept: Department) => dept.id === role.department_id) : null;
         const manager = employees.find(emp => emp.id === employee.manager_id);
         return {
             'Employee ID': employee.id,
@@ -33,23 +34,23 @@ export async function viewAllEmployees(dbService: DatabaseService) {
     displayTableWithoutIndex(employeesWithDetails);
 }
 
-export async function viewEmployeesByDepartment(dbService: DatabaseService) {
-    const employeesByDepartment = await dbService.getEmployeesByDepartment();
+export async function viewEmployeesByDepartment(employeeService: DatabaseService['employeeService']) {
+    const employeesByDepartment = await employeeService.getEmployeesByDepartment();
     console.log(chalk.blue('Employees by Department:'));
     displayTableWithoutIndex(employeesByDepartment);
 }
 
-export async function viewEmployeesByManager(dbService: DatabaseService) {
-    const employeesByManager = await dbService.getEmployeesByManager();
+export async function viewEmployeesByManager(employeeService: DatabaseService['employeeService']) {
+    const employeesByManager = await employeeService.getEmployeesByManager();
     console.log(chalk.blue('Employees by Manager:'));
     displayTableWithoutIndex(employeesByManager);
 }
 
-export async function viewAllRoles(dbService: DatabaseService) {
-    const roles = await dbService.getAllRoles();
-    const departmentsForRoles = await dbService.getAllDepartments();
+export async function viewAllRoles(roleService: DatabaseService['roleService'], departmentService: DatabaseService['departmentService']) {
+    const roles = await roleService.getAllRoles();
+    const departmentsForRoles = await departmentService.getAllDepartments();
     const rolesWithDepartments = roles.map(role => {
-        const department = departmentsForRoles.find(dept => dept.id === role.department_id);
+        const department = departmentsForRoles.find((dept: Department) => dept.id === role.department_id);
         return {
             'Role ID': role.id,
             'Job Title': role.role_title,

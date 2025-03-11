@@ -1,3 +1,5 @@
+// This file is formatting how the tables are displayed
+
 import Table from 'cli-table3';
 
 export function displayTableWithoutIndex(data: any[]) {

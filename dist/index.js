@@ -1,4 +1,5 @@
 "use strict";
+// This is the file the application runs from, as in complies all the supporting files. 
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -14,7 +15,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const pg_1 = require("pg");
 const dotenv_1 = require("dotenv");
-const databaseServices_1 = require("./databaseServices");
+const databaseServices_1 = require("./database/databaseServices");
 const prompts_1 = require("./services/prompts");
 const asciiArt_1 = require("./services/utils/asciiArt");
 const addOperations_1 = require("./operations/addOperations");
@@ -39,27 +40,28 @@ function main() {
             yield pool.connect();
             // Display the ASCII art when the app starts
             (0, asciiArt_1.displayAsciiArt)();
+            // Prompt methods for the application
             let exit = false;
             while (!exit) {
                 const action = yield (0, prompts_1.mainMenu)();
                 switch (action) {
                     case 'View All Departments':
-                        yield (0, viewOperations_1.viewAllDepartments)(dbService);
+                        yield (0, viewOperations_1.viewAllDepartments)(dbService.departmentService);
                         break;
                     case 'View All Employees':
-                        yield (0, viewOperations_1.viewAllEmployees)(dbService);
+                        yield (0, viewOperations_1.viewAllEmployees)(dbService.employeeService, dbService.roleService, dbService.departmentService);
                         break;
                     case 'View Employees by Department':
-                        yield (0, viewOperations_1.viewEmployeesByDepartment)(dbService);
+                        yield (0, viewOperations_1.viewEmployeesByDepartment)(dbService.employeeService);
                         break;
                     case 'View Employees by Manager':
-                        yield (0, viewOperations_1.viewEmployeesByManager)(dbService);
+                        yield (0, viewOperations_1.viewEmployeesByManager)(dbService.employeeService);
                         break;
                     case 'View All Roles':
-                        yield (0, viewOperations_1.viewAllRoles)(dbService);
+                        yield (0, viewOperations_1.viewAllRoles)(dbService.roleService, dbService.departmentService);
                         break;
                     case 'View Total Utilized Budget of a Department':
-                        const allDepartmentsForBudget = yield dbService.getAllDepartments();
+                        const allDepartmentsForBudget = yield dbService.departmentService.getAllDepartments();
                         const departmentChoices = allDepartmentsForBudget.map(department => ({
                             name: `${department.department_name} (ID: ${department.id})`,
                             value: department.id
@@ -72,33 +74,33 @@ function main() {
                                 choices: departmentChoices
                             }
                         ]);
-                        const totalBudget = yield dbService.getTotalUtilizedBudget(budgetAnswers.departmentId);
+                        const totalBudget = yield dbService.departmentService.getTotalUtilizedBudget(budgetAnswers.departmentId);
                         console.log(chalk_1.default.blue(`Total Utilized Budget for ${totalBudget.Department}:`));
                         console.log(`$${totalBudget['Total Utilized Budget']}`);
                         break;
                     case 'Add Department':
-                        yield (0, addOperations_1.addDepartment)(dbService);
+                        yield (0, addOperations_1.addDepartment)(dbService.departmentService);
                         break;
                     case 'Add Role':
-                        yield (0, addOperations_1.addRole)(dbService);
+                        yield (0, addOperations_1.addRole)(dbService.roleService, dbService.departmentService);
                         break;
                     case 'Add Employee':
-                        yield (0, addOperations_1.addEmployee)(dbService);
+                        yield (0, addOperations_1.addEmployee)(dbService.employeeService, dbService.roleService);
                         break;
                     case 'Update Employee Role':
-                        yield (0, updateOperations_1.updateEmployeeRole)(dbService);
+                        yield (0, updateOperations_1.updateEmployeeRole)(dbService.employeeService, dbService.roleService);
                         break;
                     case 'Update Employee Manager':
-                        yield (0, updateOperations_1.updateEmployeeManager)(dbService);
+                        yield (0, updateOperations_1.updateEmployeeManager)(dbService.employeeService);
                         break;
                     case 'Delete Department':
-                        yield (0, deleteOperations_1.deleteDepartment)(dbService);
+                        yield (0, deleteOperations_1.deleteDepartment)(dbService.departmentService);
                         break;
                     case 'Delete Role':
-                        yield (0, deleteOperations_1.deleteRole)(dbService);
+                        yield (0, deleteOperations_1.deleteRole)(dbService.roleService);
                         break;
                     case 'Delete Employee':
-                        yield (0, deleteOperations_1.deleteEmployee)(dbService);
+                        yield (0, deleteOperations_1.deleteEmployee)(dbService.employeeService);
                         break;
                     case 'Exit':
                         exit = true;

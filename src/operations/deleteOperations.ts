@@ -1,13 +1,13 @@
-import { DatabaseService } from '../databaseServices';
+import { DatabaseService } from '../database/databaseServices';
 import { promptForDeleteDepartment, promptForDeleteRole, promptForDeleteEmployee } from '../services/deletePrompts';
 import chalk from 'chalk';
 
-export async function deleteDepartment(dbService: DatabaseService) {
-    const allDepartments = await dbService.getAllDepartments();
+export async function deleteDepartment(departmentService: DatabaseService['departmentService']) {
+    const allDepartments = await departmentService.getAllDepartments();
     const { departmentId, confirmDelete } = await promptForDeleteDepartment(allDepartments);
     if (confirmDelete) {
         try {
-            await dbService.deleteDepartment(parseInt(departmentId));
+            await departmentService.deleteDepartment(parseInt(departmentId));
             console.log(chalk.green('Deleted department'));
         } catch (error) {
             if (error instanceof Error) {
@@ -21,12 +21,12 @@ export async function deleteDepartment(dbService: DatabaseService) {
     }
 }
 
-export async function deleteRole(dbService: DatabaseService) {
-    const allRoles = await dbService.getAllRoles();
+export async function deleteRole(roleService: DatabaseService['roleService']) {
+    const allRoles = await roleService.getAllRoles();
     const { roleId, confirmDeleteRole } = await promptForDeleteRole(allRoles);
     if (confirmDeleteRole) {
         try {
-            await dbService.deleteRole(parseInt(roleId));
+            await roleService.deleteRole(parseInt(roleId));
             console.log(chalk.green('Deleted role'));
         } catch (error) {
             if (error instanceof Error) {
@@ -40,12 +40,12 @@ export async function deleteRole(dbService: DatabaseService) {
     }
 }
 
-export async function deleteEmployee(dbService: DatabaseService) {
-    const allEmployees = await dbService.getAllEmployees();
+export async function deleteEmployee(employeeService: DatabaseService['employeeService']) {
+    const allEmployees = await employeeService.getAllEmployees();
     const { employeeId, confirmDeleteEmployee } = await promptForDeleteEmployee(allEmployees);
     if (confirmDeleteEmployee) {
         try {
-            await dbService.deleteEmployee(parseInt(employeeId));
+            await employeeService.deleteEmployee(parseInt(employeeId));
             console.log(chalk.green('Deleted employee'));
         } catch (error) {
             if (error instanceof Error) {

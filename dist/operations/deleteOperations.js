@@ -15,13 +15,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteEmployee = exports.deleteRole = exports.deleteDepartment = void 0;
 const deletePrompts_1 = require("../services/deletePrompts");
 const chalk_1 = __importDefault(require("chalk"));
-function deleteDepartment(dbService) {
+function deleteDepartment(departmentService) {
     return __awaiter(this, void 0, void 0, function* () {
-        const allDepartments = yield dbService.getAllDepartments();
+        const allDepartments = yield departmentService.getAllDepartments();
         const { departmentId, confirmDelete } = yield (0, deletePrompts_1.promptForDeleteDepartment)(allDepartments);
         if (confirmDelete) {
             try {
-                yield dbService.deleteDepartment(parseInt(departmentId));
+                yield departmentService.deleteDepartment(parseInt(departmentId));
                 console.log(chalk_1.default.green('Deleted department'));
             }
             catch (error) {
@@ -39,13 +39,13 @@ function deleteDepartment(dbService) {
     });
 }
 exports.deleteDepartment = deleteDepartment;
-function deleteRole(dbService) {
+function deleteRole(roleService) {
     return __awaiter(this, void 0, void 0, function* () {
-        const allRoles = yield dbService.getAllRoles();
+        const allRoles = yield roleService.getAllRoles();
         const { roleId, confirmDeleteRole } = yield (0, deletePrompts_1.promptForDeleteRole)(allRoles);
         if (confirmDeleteRole) {
             try {
-                yield dbService.deleteRole(parseInt(roleId));
+                yield roleService.deleteRole(parseInt(roleId));
                 console.log(chalk_1.default.green('Deleted role'));
             }
             catch (error) {
@@ -63,13 +63,13 @@ function deleteRole(dbService) {
     });
 }
 exports.deleteRole = deleteRole;
-function deleteEmployee(dbService) {
+function deleteEmployee(employeeService) {
     return __awaiter(this, void 0, void 0, function* () {
-        const allEmployees = yield dbService.getAllEmployees();
+        const allEmployees = yield employeeService.getAllEmployees();
         const { employeeId, confirmDeleteEmployee } = yield (0, deletePrompts_1.promptForDeleteEmployee)(allEmployees);
         if (confirmDeleteEmployee) {
             try {
-                yield dbService.deleteEmployee(parseInt(employeeId));
+                yield employeeService.deleteEmployee(parseInt(employeeId));
                 console.log(chalk_1.default.green('Deleted employee'));
             }
             catch (error) {

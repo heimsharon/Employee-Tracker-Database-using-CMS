@@ -1,5 +1,5 @@
 import inquirer from 'inquirer';
-import { DatabaseService } from '../databaseServices';
+import { DatabaseService } from '../database/databaseServices';
 import { Pool } from 'pg';
 
 const pool = new Pool({

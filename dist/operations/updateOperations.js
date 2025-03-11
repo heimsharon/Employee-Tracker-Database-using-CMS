@@ -15,21 +15,21 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateEmployeeManager = exports.updateEmployeeRole = void 0;
 const updateEmployeePrompt_1 = require("../services/updateEmployeePrompt");
 const chalk_1 = __importDefault(require("chalk"));
-function updateEmployeeRole(dbService) {
+function updateEmployeeRole(employeeService, roleService) {
     return __awaiter(this, void 0, void 0, function* () {
-        const allEmployeesForRoleUpdate = yield dbService.getAllEmployees();
-        const allRolesForRoleUpdate = yield dbService.getAllRoles();
+        const allEmployeesForRoleUpdate = yield employeeService.getAllEmployees();
+        const allRolesForRoleUpdate = yield roleService.getAllRoles();
         const updateRoleDetails = yield (0, updateEmployeePrompt_1.promptForUpdateEmployeeRole)(allEmployeesForRoleUpdate, allRolesForRoleUpdate);
-        yield dbService.updateEmployeeRole(parseInt(updateRoleDetails.employeeId), parseInt(updateRoleDetails.roleId));
+        yield employeeService.updateEmployeeRole(parseInt(updateRoleDetails.employeeId), parseInt(updateRoleDetails.roleId));
         console.log(chalk_1.default.green('Updated employee role'));
     });
 }
 exports.updateEmployeeRole = updateEmployeeRole;
-function updateEmployeeManager(dbService) {
+function updateEmployeeManager(employeeService) {
     return __awaiter(this, void 0, void 0, function* () {
-        const allEmployeesForManagerUpdate = yield dbService.getAllEmployees();
+        const allEmployeesForManagerUpdate = yield employeeService.getAllEmployees();
         const updateManagerDetails = yield (0, updateEmployeePrompt_1.promptForUpdateEmployeeManager)(allEmployeesForManagerUpdate);
-        yield dbService.updateEmployeeManager(parseInt(updateManagerDetails.employeeId), updateManagerDetails.managerId !== null ? parseInt(updateManagerDetails.managerId) : null);
+        yield employeeService.updateEmployeeManager(parseInt(updateManagerDetails.employeeId), updateManagerDetails.managerId !== null ? parseInt(updateManagerDetails.managerId) : null);
         console.log(chalk_1.default.green('Updated employee manager'));
     });
 }

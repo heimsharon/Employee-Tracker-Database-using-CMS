@@ -1,6 +1,8 @@
+// This is the file the application runs from, as in complies all the supporting files. 
+
 import { Pool } from 'pg';
 import { config } from 'dotenv';
-import { DatabaseService } from './databaseServices';
+import { DatabaseService } from './database/databaseServices';
 import { mainMenu } from './services/prompts';
 import { displayAsciiArt } from './services/utils/asciiArt';
 import { displayTableWithoutIndex } from './services/utils/displayTable';
@@ -31,28 +33,29 @@ async function main() {
     // Display the ASCII art when the app starts
     displayAsciiArt();
 
+    // Prompt methods for the application
     let exit = false;
     while (!exit) {
       const action = await mainMenu();
 
       switch (action) {
         case 'View All Departments':
-          await viewAllDepartments(dbService);
+          await viewAllDepartments(dbService.departmentService);
           break;
         case 'View All Employees':
-          await viewAllEmployees(dbService);
+          await viewAllEmployees(dbService.employeeService, dbService.roleService, dbService.departmentService);
           break;
         case 'View Employees by Department':
-          await viewEmployeesByDepartment(dbService);
+          await viewEmployeesByDepartment(dbService.employeeService);
           break;
         case 'View Employees by Manager':
-          await viewEmployeesByManager(dbService);
+          await viewEmployeesByManager(dbService.employeeService);
           break;
         case 'View All Roles':
-          await viewAllRoles(dbService);
+          await viewAllRoles(dbService.roleService, dbService.departmentService);
           break;
         case 'View Total Utilized Budget of a Department':
-          const allDepartmentsForBudget = await dbService.getAllDepartments();
+          const allDepartmentsForBudget = await dbService.departmentService.getAllDepartments();
           const departmentChoices = allDepartmentsForBudget.map(department => ({
             name: `${department.department_name} (ID: ${department.id})`,
             value: department.id
@@ -65,33 +68,33 @@ async function main() {
               choices: departmentChoices
             }
           ]);
-          const totalBudget = await dbService.getTotalUtilizedBudget(budgetAnswers.departmentId);
+          const totalBudget = await dbService.departmentService.getTotalUtilizedBudget(budgetAnswers.departmentId);
           console.log(chalk.blue(`Total Utilized Budget for ${totalBudget.Department}:`));
           console.log(`$${totalBudget['Total Utilized Budget']}`);
           break;
         case 'Add Department':
-          await addDepartment(dbService);
+          await addDepartment(dbService.departmentService);
           break;
         case 'Add Role':
-          await addRole(dbService);
+          await addRole(dbService.roleService, dbService.departmentService);
           break;
         case 'Add Employee':
-          await addEmployee(dbService);
+          await addEmployee(dbService.employeeService, dbService.roleService);
           break;
         case 'Update Employee Role':
-          await updateEmployeeRole(dbService);
+          await updateEmployeeRole(dbService.employeeService, dbService.roleService);
           break;
         case 'Update Employee Manager':
-          await updateEmployeeManager(dbService);
+          await updateEmployeeManager(dbService.employeeService);
           break;
         case 'Delete Department':
-          await deleteDepartment(dbService);
+          await deleteDepartment(dbService.departmentService);
           break;
         case 'Delete Role':
-          await deleteRole(dbService);
+          await deleteRole(dbService.roleService);
           break;
         case 'Delete Employee':
-          await deleteEmployee(dbService);
+          await deleteEmployee(dbService.employeeService);
           break;
         case 'Exit':
           exit = true;

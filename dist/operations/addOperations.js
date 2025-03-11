@@ -17,29 +17,31 @@ const addDepartmentPrompt_1 = require("../services/addDepartmentPrompt");
 const addRolePrompt_1 = require("../services/addRolePrompt");
 const addEmployeePrompt_1 = require("../services/addEmployeePrompt");
 const chalk_1 = __importDefault(require("chalk"));
-function addDepartment(dbService) {
+function addDepartment(departmentService) {
     return __awaiter(this, void 0, void 0, function* () {
         const departmentName = yield (0, addDepartmentPrompt_1.promptForDepartmentName)();
-        yield dbService.addDepartment(departmentName);
+        const existingDepartments = yield departmentService.getAllDepartments();
+        yield departmentService.addDepartment(departmentName);
         console.log(chalk_1.default.green('Added new department'));
     });
 }
 exports.addDepartment = addDepartment;
-function addRole(dbService) {
+function addRole(roleService, departmentService) {
     return __awaiter(this, void 0, void 0, function* () {
-        const existingDepartments = yield dbService.getAllDepartments();
+        const existingDepartments = yield departmentService.getAllDepartments();
+        const existingRoles = yield roleService.getAllRoles();
         const roleDetails = yield (0, addRolePrompt_1.promptForRoleDetails)(existingDepartments);
-        yield dbService.addRole(roleDetails.roleTitle, parseFloat(roleDetails.salary), parseInt(roleDetails.departmentId));
+        yield roleService.addRole(roleDetails.roleTitle, parseFloat(roleDetails.salary), parseInt(roleDetails.departmentId));
         console.log(chalk_1.default.green('Added new role'));
     });
 }
 exports.addRole = addRole;
-function addEmployee(dbService) {
+function addEmployee(employeeService, roleService) {
     return __awaiter(this, void 0, void 0, function* () {
-        const existingRoles = yield dbService.getAllRoles();
-        const existingEmployees = yield dbService.getAllEmployees();
+        const existingRoles = yield roleService.getAllRoles();
+        const existingEmployees = yield employeeService.getAllEmployees();
         const employeeDetails = yield (0, addEmployeePrompt_1.promptForEmployeeDetails)(existingRoles, existingEmployees);
-        yield dbService.addEmployee(employeeDetails.firstName, employeeDetails.lastName, parseInt(employeeDetails.roleId), employeeDetails.managerId);
+        yield employeeService.addEmployee(employeeDetails.firstName, employeeDetails.lastName, parseInt(employeeDetails.roleId), employeeDetails.managerId);
         console.log(chalk_1.default.green('Added new employee'));
     });
 }

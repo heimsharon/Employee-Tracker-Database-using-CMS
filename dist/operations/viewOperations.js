@@ -15,9 +15,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.viewAllRoles = exports.viewEmployeesByManager = exports.viewEmployeesByDepartment = exports.viewAllEmployees = exports.viewAllDepartments = void 0;
 const displayTable_1 = require("../services/utils/displayTable");
 const chalk_1 = __importDefault(require("chalk"));
-function viewAllDepartments(dbService) {
+function viewAllDepartments(departmentService) {
     return __awaiter(this, void 0, void 0, function* () {
-        const departments = yield dbService.getAllDepartments();
+        const departments = yield departmentService.getAllDepartments();
         console.log(chalk_1.default.blue('All Departments:'));
         (0, displayTable_1.displayTableWithoutIndex)(departments.map(department => ({
             'Department ID': department.id,
@@ -26,14 +26,14 @@ function viewAllDepartments(dbService) {
     });
 }
 exports.viewAllDepartments = viewAllDepartments;
-function viewAllEmployees(dbService) {
+function viewAllEmployees(employeeService, roleService, departmentService) {
     return __awaiter(this, void 0, void 0, function* () {
-        const employees = yield dbService.getAllEmployees();
-        const rolesForEmployees = yield dbService.getAllRoles();
-        const departmentsForEmployees = yield dbService.getAllDepartments();
+        const employees = yield employeeService.getAllEmployees();
+        const rolesForEmployees = yield roleService.getAllRoles();
+        const departmentsForEmployees = yield departmentService.getAllDepartments();
         const employeesWithDetails = employees.map(employee => {
-            const role = rolesForEmployees.find(role => role.id === employee.role_id);
-            const department = role ? departmentsForEmployees.find(dept => dept.id === role.department_id) : null;
+            const role = rolesForEmployees.find((role) => role.id === employee.role_id);
+            const department = role ? departmentsForEmployees.find((dept) => dept.id === role.department_id) : null;
             const manager = employees.find(emp => emp.id === employee.manager_id);
             return {
                 'Employee ID': employee.id,
@@ -50,28 +50,28 @@ function viewAllEmployees(dbService) {
     });
 }
 exports.viewAllEmployees = viewAllEmployees;
-function viewEmployeesByDepartment(dbService) {
+function viewEmployeesByDepartment(employeeService) {
     return __awaiter(this, void 0, void 0, function* () {
-        const employeesByDepartment = yield dbService.getEmployeesByDepartment();
+        const employeesByDepartment = yield employeeService.getEmployeesByDepartment();
         console.log(chalk_1.default.blue('Employees by Department:'));
         (0, displayTable_1.displayTableWithoutIndex)(employeesByDepartment);
     });
 }
 exports.viewEmployeesByDepartment = viewEmployeesByDepartment;
-function viewEmployeesByManager(dbService) {
+function viewEmployeesByManager(employeeService) {
     return __awaiter(this, void 0, void 0, function* () {
-        const employeesByManager = yield dbService.getEmployeesByManager();
+        const employeesByManager = yield employeeService.getEmployeesByManager();
         console.log(chalk_1.default.blue('Employees by Manager:'));
         (0, displayTable_1.displayTableWithoutIndex)(employeesByManager);
     });
 }
 exports.viewEmployeesByManager = viewEmployeesByManager;
-function viewAllRoles(dbService) {
+function viewAllRoles(roleService, departmentService) {
     return __awaiter(this, void 0, void 0, function* () {
-        const roles = yield dbService.getAllRoles();
-        const departmentsForRoles = yield dbService.getAllDepartments();
+        const roles = yield roleService.getAllRoles();
+        const departmentsForRoles = yield departmentService.getAllDepartments();
         const rolesWithDepartments = roles.map(role => {
-            const department = departmentsForRoles.find(dept => dept.id === role.department_id);
+            const department = departmentsForRoles.find((dept) => dept.id === role.department_id);
             return {
                 'Role ID': role.id,
                 'Job Title': role.role_title,
