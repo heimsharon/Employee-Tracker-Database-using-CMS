@@ -76,7 +76,7 @@ This project is an Employee Tracker application that uses a Content Management S
 ![Employee Tracker Screenshot](Assets/employeetracker.png)
 
 ### Video Demo
-[Google Drive Video Link](https://drive.google.com/uc?id=1NT2wX6xkN-Jq-wIeR9K-pQviQRZ17PaW&export=download)
+![Checkout the application in use](https://drive.google.com/file/d/1NT2wX6xkN-Jq-wIeR9K-pQviQRZ17PaW/view?usp=sharing)
 
 ## License
 
