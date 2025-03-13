@@ -78,4 +78,5 @@ This project is an Employee Tracker application that uses a Content Management S
 
 ## License
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+This project is licensed under the MIT License.
