@@ -1,4 +1,6 @@
-// This is the file the application runs from, as it compiles all the supporting files. 
+// filepath: src/index.ts
+// This file is the main entry point for the Employee Tracker application.
+// This is the file the application runs from, as it compiles all the supporting files.
 
 import { Pool } from 'pg';
 import { config } from 'dotenv';
@@ -14,6 +16,7 @@ import chalk from 'chalk';
 
 config(); // Load environment variables from .env file
 
+// Set up database configuration using environment variables
 const dbConfig = {
   user: process.env.DB_USER as string,
   host: process.env.DB_HOST as string,
@@ -23,19 +26,19 @@ const dbConfig = {
 };
 
 async function main() {
-  const pool = new Pool(dbConfig);
-  const dbService = new DatabaseService(pool);
+  const pool = new Pool(dbConfig); // Create a new PostgreSQL connection pool
+  const dbService = new DatabaseService(pool); // Initialize the database service
 
   try {
-    await pool.connect();
+    await pool.connect(); // Connect to the database
 
     // Display the ASCII art when the app starts
     displayAsciiArt();
 
-    // Prompt methods for the application
+    // Main application loop
     let exit = false;
     while (!exit) {
-      const action = await mainMenu();
+      const action = await mainMenu(); // Show main menu and get user action
 
       switch (action) {
         case 'View All Departments':
@@ -54,6 +57,7 @@ async function main() {
           await viewAllRoles(dbService.roleService, dbService.departmentService);
           break;
         case 'View Total Utilized Budget of a Department':
+          // Prompt user to select a department for budget view
           const allDepartmentsForBudget = await dbService.departmentService.getAllDepartments();
           const departmentChoices = allDepartmentsForBudget.map(department => ({
             name: `${department.department_name} (ID: ${department.id})`,
@@ -96,19 +100,20 @@ async function main() {
           await deleteEmployee(dbService.employeeService);
           break;
         case 'Exit':
-          exit = true;
+          exit = true; // Exit the main loop and end the program
           break;
       }
     }
   } catch (error) {
+    // Handle errors and display them in red
     if (error instanceof Error) {
       console.error(chalk.red('Error:'), chalk.red(error.message));
     } else {
       console.error(chalk.red('Unknown error:'), error);
     }
   } finally {
-    await pool.end();
+    await pool.end(); // Close the database connection pool
   }
 }
 
-main();
+main(); // Start the application

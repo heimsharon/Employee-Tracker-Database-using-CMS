@@ -1,19 +1,26 @@
-// This file is the prompt method to delete a department, role or employee,with warning messages.
+// filepath: src/services/deletePrompts.ts
+// This file is the prompt method to delete a department, role or employee, with warning messages.
 
 import inquirer from 'inquirer';
 import { DatabaseService } from '../database/databaseServices';
 import { Pool } from 'pg';
 
+// NOTE: For security, never hard-code your database credentials in source files if the code will be posted publicly.
+// Use a .env file and a library like dotenv to load sensitive information from environment variables.
+
+// Initialize the PostgreSQL connection pool
 const pool = new Pool({
-  user: 'heimsharon',
+  user: 'username', // Replace with your actual username
   host: 'localhost',
   database: 'employees_db',
-  password: 'Thisisstupid11',
+  password: 'ThisIsMyPassword', // Replace with your actual password
   port: 5432,
 });
 
+// Create a new instance of the database service
 const dbService = new DatabaseService(pool);
 
+// Prompt user to select a department to delete and confirm deletion
 export async function promptForDeleteDepartment(departments: any[]): Promise<{ departmentId: string, confirmDelete: boolean }> {
   const departmentChoices = departments.map(department => ({
     name: `${department.department_name} (ID: ${department.id})`,
@@ -38,6 +45,7 @@ export async function promptForDeleteDepartment(departments: any[]): Promise<{ d
   return { departmentId: answers.departmentId, confirmDelete: answers.confirmDelete };
 }
 
+// Prompt user to select a role to delete and confirm deletion
 export async function promptForDeleteRole(roles: any[]): Promise<{ roleId: string, confirmDeleteRole: boolean }> {
   const roleChoices = roles.map(role => ({
     name: `${role.role_title} (ID: ${role.id})`,
@@ -62,6 +70,7 @@ export async function promptForDeleteRole(roles: any[]): Promise<{ roleId: strin
   return { roleId: answers.roleId, confirmDeleteRole: answers.confirmDeleteRole };
 }
 
+// Prompt user to select an employee to delete and confirm deletion
 export async function promptForDeleteEmployee(employees: any[]): Promise<{ employeeId: string, confirmDeleteEmployee: boolean }> {
   const employeeChoices = employees.map(employee => ({
     name: `${employee.first_name} ${employee.last_name} (ID: ${employee.id})`,
